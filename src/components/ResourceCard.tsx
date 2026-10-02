@@ -33,9 +33,9 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
-      className="group flex flex-col"
+      className="group flex flex-col rounded-[2rem] border border-line bg-surface p-3 pb-5 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-28px_rgb(15_23_42/0.45)]"
     >
-      <div className="relative overflow-hidden rounded-3xl">
+      <div className="relative overflow-hidden rounded-[1.5rem]">
         <ResourceArt
           resource={resource}
           className={cn("aspect-[16/10] transition-transform duration-500 group-hover:scale-[1.02]", dimmed && "opacity-50 saturate-50")}
@@ -45,7 +45,7 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
         </span>
       </div>
 
-      <div className="mt-5 flex items-start justify-between gap-3 px-1">
+      <div className="mt-5 flex items-start justify-between gap-3 px-2">
         <div className="min-w-0">
           <h3 className="truncate text-lg font-bold tracking-tight">{resource.name}</h3>
           <p className="mt-0.5 truncate text-sm text-muted">{[...meta, capacity].filter(Boolean).join(" · ")}</p>
@@ -68,11 +68,11 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
       </div>
 
       {resource.features.length > 0 && (
-        <p className="mt-1.5 truncate px-1 text-xs text-muted">{resource.features.map((f) => FEATURES[f].label).join(" · ")}</p>
+        <p className="mt-1.5 truncate px-2 text-xs text-muted">{resource.features.map((f) => FEATURES[f].label).join(" · ")}</p>
       )}
 
       {sameDay && (
-        <div className="mt-3 px-1">
+        <div className="mt-4 px-2">
           <DayTimeline day={startOfDay(start)} busy={busy} selection={{ start, end, ok: free && !past }} />
         </div>
       )}
@@ -110,8 +110,8 @@ function Status({ state, feminine }: { state: ResourceState; feminine: boolean }
 
 export function ResourceCardSkeleton() {
   return (
-    <div>
-      <div className="skeleton aspect-[16/10] rounded-3xl" />
+    <div className="rounded-[2rem] border border-line bg-surface p-3 pb-5">
+      <div className="skeleton aspect-[16/10] rounded-[1.5rem]" />
       <div className="skeleton mt-4 h-4 w-32" />
       <div className="skeleton mt-2 h-3 w-48" />
     </div>

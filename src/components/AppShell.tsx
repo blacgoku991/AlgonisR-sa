@@ -9,20 +9,31 @@ import { resetDemo } from "../services/demoService";
 import type { View } from "../store";
 import { Avatar } from "./ui/Avatar";
 import { Logo } from "./ui/Logo";
+import { fmtRelativeDay, fmtTime } from "../lib/time";
 
 interface NavItem {
   view: View;
   label: string;
   short: string;
+  hint: string;
   icon: typeof CalendarPlus;
+  /** Couleur propre à l'onglet (pastille de l'icône). */
+  tone: string;
 }
 
 const NAV: NavItem[] = [
-  { view: "book", label: "Réserver", short: "Réserver", icon: CalendarPlus },
-  { view: "planning", label: "Planning", short: "Planning", icon: ChartGantt },
-  { view: "bookings", label: "Mes réservations", short: "Mes résas", icon: CalendarCheck },
+  { view: "book", label: "Réserver", short: "Réserver", hint: "Salles et véhicules", icon: CalendarPlus, tone: "bg-teal-500/15 text-teal-600 dark:text-teal-300" },
+  { view: "planning", label: "Planning", short: "Planning", hint: "Vue de la journée", icon: ChartGantt, tone: "bg-violet-500/15 text-violet-600 dark:text-violet-300" },
+  { view: "bookings", label: "Mes réservations", short: "Mes résas", hint: "À venir et passées", icon: CalendarCheck, tone: "bg-amber-500/15 text-amber-600 dark:text-amber-300" },
 ];
-const RECEPTION: NavItem = { view: "reception", label: "Accueil", short: "Accueil", icon: KeyRound };
+const RECEPTION: NavItem = {
+  view: "reception",
+  label: "Accueil",
+  short: "Accueil",
+  hint: "Clés des véhicules",
+  icon: KeyRound,
+  tone: "bg-rose-500/15 text-rose-600 dark:text-rose-300",
+};
 
 interface AppShellProps {
   children: ReactNode;
@@ -36,40 +47,28 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
   const view = useView();
   const { data: bookings } = useMyBookings();
   const { data: role } = useRole();
-  const upcoming = bookings?.filter((b) => b.end > new Date()).length ?? 0;
+  const now = new Date();
+  const future = (bookings ?? []).filter((b) => b.end > now && !b.isCancelled).sort((a, b) => a.start.getTime() - b.start.getTime());
+  const upcoming = future.length;
+  const next = future[0];
   const items = role?.reception ? [...NAV, RECEPTION] : NAV;
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      {config.demo && (
-        <div className="flex items-center justify-center gap-3 bg-brand-100 px-4 py-2 text-center text-xs text-brand-700">
-          <span>Démonstration — données fictives, aucune invitation n'est envoyée.</span>
-          <button
-            onClick={() => {
-              resetDemo();
-              window.location.reload();
-            }}
-            className="hidden items-center gap-1 underline underline-offset-2 hover:opacity-80 sm:inline-flex"
-          >
-            <RotateCcw className="size-3" /> Réinitialiser
-          </button>
-        </div>
-      )}
-
-      <header className="sticky top-0 z-30 bg-[var(--bg)]/85 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-7xl items-center gap-6 px-5 sm:px-10">
-          <a href={hrefFor("book")} className="flex items-center gap-3" aria-label="Retour à la réservation">
-            <Logo className="size-9" />
+    <div className="min-h-dvh lg:pl-[300px]">
+      {/* Menu latéral (ordinateur) */}
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[300px] flex-col p-4 lg:flex">
+        <div className="flex h-full flex-col rounded-[2rem] border border-line bg-surface px-5 py-7">
+          <a href={hrefFor("book")} className="flex items-center gap-3 px-2" aria-label="Retour à la réservation">
+            <Logo className="size-11" />
             <span className="leading-tight">
-              <span className="block text-base font-bold tracking-tight">{config.appName}</span>
-              <span className="hidden text-xs text-muted sm:block">{config.companyName}</span>
+              <span className="block text-lg font-bold tracking-tight">{config.appName}</span>
+              <span className="block text-xs text-muted">{config.companyName} · réservations</span>
             </span>
           </a>
-          <nav
-            className="mx-auto hidden items-center gap-1 rounded-full border border-line bg-surface p-1.5 md:flex"
-            aria-label="Navigation principale"
-          >
-            {items.map(({ view: v, label, icon: Icon }) => {
+
+          <p className="mt-10 mb-3 px-3 text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">Menu</p>
+          <nav className="space-y-1.5" aria-label="Navigation principale">
+            {items.map(({ view: v, label, hint, icon: Icon, tone }) => {
               const active = view === v;
               return (
                 <a
@@ -77,17 +76,22 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
                   href={hrefFor(v)}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
-                    active ? "bg-brand-600 text-accent-fg" : "text-muted hover:bg-surface-2 hover:text-slate-900 dark:hover:text-white",
+                    "group flex items-center gap-3.5 rounded-2xl p-2.5 transition-all",
+                    active ? "bg-brand-600 text-accent-fg shadow-[0_12px_30px_-14px_var(--ink)]" : "hover:bg-surface-2",
                   )}
                 >
-                  <Icon className="size-4" strokeWidth={active ? 2.2 : 1.8} />
-                  {label}
+                  <span className={cn("grid size-11 shrink-0 place-items-center rounded-xl", active ? "bg-accent-fg/15" : tone)}>
+                    <Icon className="size-5" strokeWidth={2} />
+                  </span>
+                  <span className="min-w-0 flex-1 leading-tight">
+                    <span className="block text-[15px] font-semibold">{label}</span>
+                    <span className={cn("block truncate text-xs", active ? "opacity-75" : "text-muted")}>{hint}</span>
+                  </span>
                   {v === "bookings" && upcoming > 0 && (
                     <span
                       className={cn(
-                        "grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11px] font-semibold tabular-nums",
-                        active ? "bg-accent-fg/20" : "bg-brand-100 text-brand-700",
+                        "grid h-6 min-w-6 place-items-center rounded-full px-1.5 text-xs font-bold tabular-nums",
+                        active ? "bg-accent-fg/20" : "bg-amber-500/15 text-amber-600 dark:text-amber-300",
                       )}
                     >
                       {upcoming}
@@ -97,18 +101,67 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
               );
             })}
           </nav>
-          <div className="ml-auto flex items-center gap-2 md:ml-0">
+
+          {next && (
+            <a
+              href={hrefFor("bookings")}
+              className="mt-8 block rounded-2xl bg-[var(--hero)] p-4 transition-transform hover:-translate-y-0.5"
+            >
+              <p className="text-[11px] font-semibold tracking-[0.12em] text-brand-700 uppercase">Prochaine réservation</p>
+              <p className="mt-2 truncate font-semibold">{next.subject}</p>
+              <p className="mt-0.5 truncate text-sm text-muted">
+                {fmtRelativeDay(next.start)} · {fmtTime(next.start)}
+                {next.resourceName || next.resource?.name ? ` · ${next.resource?.name ?? next.resourceName}` : ""}
+              </p>
+            </a>
+          )}
+
+          <div className="mt-auto space-y-3">
+            {config.demo && (
+              <div className="rounded-2xl border border-dashed border-line p-3.5 text-xs text-muted">
+                <p className="font-semibold text-brand-700">Mode démonstration</p>
+                <p className="mt-1">Données fictives, aucune invitation n'est envoyée.</p>
+                <button
+                  onClick={() => {
+                    resetDemo();
+                    window.location.reload();
+                  }}
+                  className="mt-2 inline-flex items-center gap-1 font-medium text-brand-700 hover:underline"
+                >
+                  <RotateCcw className="size-3" /> Réinitialiser
+                </button>
+              </div>
+            )}
+            <div className="flex items-center gap-2 border-t border-line pt-4">
+              <UserMenu onSignOut={embedded ? undefined : onSignOut} />
+              {!embedded && <ThemeButton theme={theme} onToggle={onToggleTheme} />}
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* En-tête (tablette et mobile) */}
+      <header className="sticky top-0 z-30 bg-[var(--bg)]/85 backdrop-blur-xl lg:hidden">
+        {config.demo && (
+          <p className="bg-brand-100 px-4 py-1.5 text-center text-xs text-brand-700">Démonstration — données fictives</p>
+        )}
+        <div className="flex h-16 items-center gap-3 px-5 sm:px-8">
+          <a href={hrefFor("book")} className="flex items-center gap-2.5" aria-label="Retour à la réservation">
+            <Logo className="size-9" />
+            <span className="text-base font-bold tracking-tight">{config.appName}</span>
+          </a>
+          <div className="ml-auto flex items-center gap-2">
             {!embedded && <ThemeButton theme={theme} onToggle={onToggleTheme} />}
             <UserMenu onSignOut={embedded ? undefined : onSignOut} compact />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-5 pt-6 pb-32 sm:px-10 sm:pt-8 md:pb-24">{children}</main>
+      <main className="mx-auto w-full max-w-[1200px] px-5 pt-4 pb-32 sm:px-8 lg:px-12 lg:pt-10 lg:pb-16">{children}</main>
 
       {/* Navigation mobile */}
       <nav
-        className="fixed inset-x-3 bottom-3 z-30 flex rounded-3xl border border-line bg-surface/95 p-1.5 shadow-lg backdrop-blur-xl md:hidden"
+        className="fixed inset-x-3 z-30 flex rounded-3xl border border-line bg-surface/95 p-1.5 shadow-lg backdrop-blur-xl lg:hidden"
         style={{ bottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
         aria-label="Navigation"
       >
@@ -120,10 +173,10 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
               onClick={() => navigate(v)}
               className={cn(
                 "flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 text-[11px] font-medium transition-colors",
-                active ? "bg-brand-100 text-brand-700" : "text-muted",
+                active ? "bg-brand-600 text-accent-fg" : "text-muted",
               )}
             >
-              <Icon className="size-5" strokeWidth={active ? 2 : 1.6} />
+              <Icon className="size-5" strokeWidth={active ? 2.2 : 1.7} />
               {short}
             </button>
           );

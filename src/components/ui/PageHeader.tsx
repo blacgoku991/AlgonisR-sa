@@ -16,7 +16,7 @@ export function PageHeader({
   icon?: LucideIcon;
 }) {
   return (
-    <header className="relative mb-10 overflow-hidden rounded-[2.5rem] bg-[var(--hero)] px-6 py-9 sm:px-12 sm:py-12">
+    <header className="relative mb-10 overflow-hidden hero rounded-[2.5rem] px-6 py-9 sm:px-12 sm:py-12">
       <svg className="pointer-events-none absolute -top-20 -right-20 hidden size-72 sm:block text-brand-500 opacity-[0.12]" viewBox="0 0 200 200" aria-hidden>
         <circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" strokeWidth="1.2" />
         <circle cx="100" cy="100" r="60" fill="currentColor" />

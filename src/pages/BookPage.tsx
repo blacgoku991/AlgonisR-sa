@@ -22,7 +22,7 @@ export function BookPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden rounded-[2.5rem] bg-[var(--hero)] px-5 pt-10 pb-6 sm:px-12 sm:pt-16 sm:pb-12">
+      <section className="relative overflow-hidden hero rounded-[2.5rem] px-5 pt-10 pb-6 sm:px-12 sm:pt-16 sm:pb-12">
         <HeroDecor />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
@@ -135,7 +135,7 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
       )}
 
       {isLoading ? (
-        <div className="grid gap-x-8 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }, (_, i) => (
             <ResourceCardSkeleton key={i} />
           ))}
@@ -152,7 +152,7 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
         />
       ) : (
         <LayoutGroup>
-          <motion.div layout className="grid gap-x-8 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">
+          <motion.div layout className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
             <AnimatePresence initial={false} mode="popLayout">
               {items.map(({ resource, state }, index) => (
                 <ResourceCard
