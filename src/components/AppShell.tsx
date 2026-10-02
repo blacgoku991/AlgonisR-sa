@@ -1,4 +1,4 @@
-import { CalendarCheck, CalendarDays, ChartGantt, LogOut, Moon, RotateCcw, Sparkles, Sun } from "lucide-react";
+import { CalendarCheck, CalendarDays, ChartGantt, LogOut, Moon, RotateCcw, Sun } from "lucide-react";
 import { motion } from "motion/react";
 import { DropdownMenu } from "radix-ui";
 import type { ReactNode } from "react";
@@ -31,40 +31,34 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
   const upcoming = bookings?.filter((b) => b.end > new Date()).length ?? 0;
 
   return (
-    <div className="ambient flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col">
       {config.demo && (
-        <div className="bg-brand-gradient relative z-40 flex items-center justify-center gap-2 px-4 py-1.5 text-center text-xs font-medium text-white">
-          <Sparkles className="size-3.5 shrink-0" />
+        <div className="flex items-center justify-center gap-3 border-b border-amber-500/20 bg-amber-500/[0.08] px-4 py-1.5 text-center text-xs text-amber-800 dark:text-amber-200/90">
           <span>
-            <strong>Mode démo</strong> — données fictives. Configurez Microsoft 365 pour envoyer de vraies invitations.
+            <span className="font-medium">Mode démonstration</span> · données fictives, aucune invitation n'est envoyée
           </span>
           <button
             onClick={() => {
               resetDemo();
               window.location.reload();
             }}
-            className="ml-1 hidden items-center gap-1 rounded-full bg-white/20 px-2 py-0.5 hover:bg-white/30 sm:inline-flex"
+            className="hidden items-center gap-1 underline-offset-2 hover:underline sm:inline-flex"
           >
             <RotateCcw className="size-3" /> Réinitialiser
           </button>
         </div>
       )}
 
-      <header className="sticky top-0 z-30 border-b border-slate-200/60 bg-white/70 backdrop-blur-xl dark:border-white/[0.06] dark:bg-[#0a0b14]/70">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
+      <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur dark:border-white/[0.07] dark:bg-[#0c0c0e]/90">
+        <div className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4 sm:px-6">
           <a href={hrefFor("book")} className="flex items-center gap-2.5" aria-label="Accueil">
-            <Logo className="size-9" />
-            <div className="hidden leading-tight sm:block">
-              <p className="text-[15px] font-bold tracking-tight">{config.appName}</p>
-              <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">{config.companyName}</p>
-            </div>
+            <Logo className="size-7" />
+            <span className="text-sm font-semibold tracking-tight">{config.appName}</span>
+            <span className="hidden text-sm text-zinc-400 sm:inline dark:text-zinc-500">/ {config.companyName}</span>
           </a>
 
-          <nav
-            className="mx-auto hidden items-center gap-1 rounded-2xl bg-slate-900/[0.04] p-1 md:flex dark:bg-white/[0.05]"
-            aria-label="Navigation principale"
-          >
-            {NAV.map(({ view: v, label, icon: Icon }) => {
+          <nav className="hidden h-full items-stretch gap-1 md:flex" aria-label="Navigation principale">
+            {NAV.map(({ view: v, label }) => {
               const active = view === v;
               return (
                 <a
@@ -72,39 +66,38 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
                   href={hrefFor(v)}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "relative flex h-9 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors",
+                    "relative flex items-center gap-2 px-3 text-sm transition-colors",
                     active
-                      ? "text-slate-900 dark:text-white"
-                      : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white",
+                      ? "text-zinc-900 dark:text-white"
+                      : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100",
                   )}
                 >
+                  {label}
+                  {v === "bookings" && upcoming > 0 && (
+                    <span className="rounded bg-zinc-200 px-1.5 text-[11px] leading-[18px] text-zinc-700 tabular-nums dark:bg-zinc-800 dark:text-zinc-300">
+                      {upcoming}
+                    </span>
+                  )}
                   {active && (
                     <motion.span
-                      layoutId="nav-pill"
-                      className="absolute inset-0 rounded-xl bg-white shadow-sm dark:bg-white/10"
-                      transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                      layoutId="nav-underline"
+                      className="absolute inset-x-2 -bottom-px h-0.5 bg-zinc-900 dark:bg-white"
+                      transition={{ type: "spring", damping: 35, stiffness: 500 }}
                     />
-                  )}
-                  <Icon className="relative size-4" />
-                  <span className="relative">{label}</span>
-                  {v === "bookings" && upcoming > 0 && (
-                    <span className="bg-brand-gradient relative rounded-full px-1.5 text-[11px] leading-[18px] text-white">{upcoming}</span>
                   )}
                 </a>
               );
             })}
           </nav>
 
-          <div className="ml-auto flex items-center gap-1.5 md:ml-0">
+          <div className="ml-auto flex items-center gap-1">
             {!embedded && (
               <button
                 onClick={onToggleTheme}
-                className="flex size-10 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-900/5 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white"
+                className="flex size-9 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
                 aria-label={theme === "dark" ? "Passer en thème clair" : "Passer en thème sombre"}
               >
-                <motion.span key={theme} initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}>
-                  {theme === "dark" ? <Sun className="size-5" /> : <Moon className="size-5" />}
-                </motion.span>
+                {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
               </button>
             )}
             <UserMenu onSignOut={embedded ? undefined : onSignOut} />
@@ -112,12 +105,12 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pt-6 pb-28 sm:px-6 sm:pt-8 md:pb-12">{children}</main>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pt-6 pb-24 sm:px-6 sm:pt-8 md:pb-12">{children}</main>
 
       {/* Barre de navigation mobile */}
       <nav
-        className="fixed inset-x-3 bottom-3 z-30 flex items-center justify-around rounded-3xl border border-slate-200/70 bg-white/85 p-1.5 shadow-xl shadow-slate-900/10 backdrop-blur-xl md:hidden dark:border-white/10 dark:bg-[#151827]/85"
-        style={{ paddingBottom: "max(6px, env(safe-area-inset-bottom))" }}
+        className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-zinc-200 bg-white/95 backdrop-blur md:hidden dark:border-white/[0.08] dark:bg-[#0c0c0e]/95"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         aria-label="Navigation"
       >
         {NAV.map(({ view: v, label, icon: Icon }) => {
@@ -127,20 +120,19 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
               key={v}
               onClick={() => navigate(v)}
               className={cn(
-                "relative flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-2 text-[11px] font-semibold",
-                active ? "text-brand-600 dark:text-brand-300" : "text-slate-500",
+                "flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px]",
+                active ? "text-zinc-900 dark:text-white" : "text-zinc-500",
               )}
             >
-              {active && <motion.span layoutId="mobile-pill" className="absolute inset-0 rounded-2xl bg-brand-500/10" />}
               <span className="relative">
-                <Icon className="size-5" />
+                <Icon className="size-5" strokeWidth={active ? 2.2 : 1.8} />
                 {v === "bookings" && upcoming > 0 && (
-                  <span className="bg-brand-gradient absolute -top-1.5 -right-2.5 rounded-full px-1 text-[10px] leading-4 text-white">
+                  <span className="absolute -top-1 -right-2 rounded bg-brand-600 px-1 text-[10px] leading-4 text-white tabular-nums">
                     {upcoming}
                   </span>
                 )}
               </span>
-              <span className="relative">{label === "Mes réservations" ? "Mes résas" : label}</span>
+              {label === "Mes réservations" ? "Mes résas" : label}
             </button>
           );
         })}
@@ -151,33 +143,33 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
 
 function UserMenu({ onSignOut }: { onSignOut?: () => void }) {
   const { data: me } = useMe();
-  if (!me) return <div className="skeleton size-9 rounded-full" />;
+  if (!me) return <div className="skeleton size-[30px] rounded-full" />;
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className="rounded-full transition-transform hover:scale-105" aria-label="Mon compte">
-          <Avatar name={me.name} email={config.demo ? me.email : "me"} size={36} />
+        <button className="ml-1 rounded-full" aria-label="Mon compte">
+          <Avatar name={me.name} email={config.demo ? me.email : "me"} size={30} />
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           align="end"
           sideOffset={8}
-          className="data-[state=open]:animate-pop z-50 w-64 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-white/10 dark:bg-[#151827]"
+          className="data-[state=open]:animate-pop z-50 w-64 rounded-lg border border-zinc-200 bg-white p-1.5 shadow-xl dark:border-white/10 dark:bg-[#161618]"
         >
           <div className="flex items-center gap-3 px-2.5 py-2.5">
             <Avatar name={me.name} email={config.demo ? me.email : "me"} size={40} />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">{me.name}</p>
-              <p className="truncate text-xs text-slate-500">{me.email}</p>
+              <p className="truncate text-xs text-zinc-500">{me.email}</p>
             </div>
           </div>
           {onSignOut && (
             <>
-              <DropdownMenu.Separator className="my-1 h-px bg-slate-100 dark:bg-white/10" />
+              <DropdownMenu.Separator className="my-1 h-px bg-zinc-100 dark:bg-white/10" />
               <DropdownMenu.Item
                 onSelect={onSignOut}
-                className="flex cursor-pointer items-center gap-2 rounded-xl px-2.5 py-2 text-sm text-slate-700 outline-none data-[highlighted]:bg-slate-100 dark:text-slate-200 dark:data-[highlighted]:bg-white/10"
+                className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 outline-none data-[highlighted]:bg-zinc-100 dark:text-zinc-200 dark:data-[highlighted]:bg-white/10"
               >
                 <LogOut className="size-4" /> Se déconnecter
               </DropdownMenu.Item>

@@ -28,33 +28,21 @@ export function BookPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <motion.h1
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-3xl font-bold tracking-tight sm:text-4xl"
-          >
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             {greeting()}
-            {me?.givenName || me?.name ? `, ${me.givenName ?? me.name.split(" ")[0]}` : ""}{" "}
-            <span className="inline-block origin-[70%_70%] animate-[wave_1.8s_ease-in-out_1]">👋</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="mt-1.5 text-slate-500 dark:text-slate-400"
-          >
-            Que souhaitez-vous <span className="text-gradient font-semibold">réserver</span> aujourd'hui ?
-          </motion.p>
-          <div className="mt-5">
+            {me ? ` ${me.givenName ?? me.name.split(" ")[0]}` : ""}
+          </p>
+          <h1 className="mt-0.5 text-2xl font-semibold tracking-tight">Nouvelle réservation</h1>
+          <div className="mt-4">
             <KindToggle value={kind} onChange={setKind} />
           </div>
         </div>
         <NextBooking />
       </header>
 
-      <section className="card p-4 sm:p-5">
+      <section className="card p-4">
         <WhenPicker kind={kind} />
       </section>
 
@@ -103,24 +91,24 @@ function Results() {
       {resources && resources.length > 0 && <FiltersBar kind={kind} resources={resources} />}
 
       <div className="flex flex-wrap items-baseline justify-between gap-2 px-1">
-        <h2 className="text-lg font-semibold tracking-tight">
+        <h2 className="text-sm font-medium">
           {availability ? (
             <>
-              <span className="text-gradient">{freeCount}</span> {freeCount > 1 ? label.many : label.one} disponible
+              {freeCount} {freeCount > 1 ? label.many : label.one} disponible
               {freeCount > 1 ? "s" : ""}
-              <span className="font-normal text-slate-400"> sur {items.length}</span>
+              <span className="font-normal text-zinc-400"> sur {items.length}</span>
             </>
           ) : (
-            <span className="text-slate-400">Recherche des disponibilités…</span>
+            <span className="text-zinc-400">Recherche des disponibilités…</span>
           )}
         </h2>
-        <p className="text-sm text-slate-500 tabular-nums dark:text-slate-400">
+        <p className="text-sm text-zinc-500 tabular-nums dark:text-zinc-400">
           {fmtLongDate(start)} · {fmtTime(start)} – {fmtTime(end)} · {fmtDuration(minutes)}
         </p>
       </div>
 
       {availabilityError && (
-        <div className="flex items-center gap-3 rounded-2xl border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-200">
+        <div className="flex items-center gap-3 rounded-lg border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-200">
           <TriangleAlert className="size-4 shrink-0" />
           Impossible de lire les disponibilités pour le moment.
           <Button variant="ghost" size="sm" className="ml-auto" icon={<RotateCcw />} onClick={() => refetch()}>
@@ -130,7 +118,7 @@ function Results() {
       )}
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="card divide-y divide-zinc-200 overflow-hidden dark:divide-white/[0.06]">
           {Array.from({ length: 6 }, (_, i) => (
             <ResourceCardSkeleton key={i} />
           ))}
@@ -146,7 +134,7 @@ function Results() {
         />
       ) : (
         <LayoutGroup>
-          <motion.div layout className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <motion.div layout className="card divide-y divide-zinc-200 overflow-hidden dark:divide-white/[0.06]">
             <AnimatePresence mode="popLayout">
               {items.map(({ resource, state }, index) => (
                 <ResourceCard
@@ -176,7 +164,7 @@ function EmptyState({ noResources, kind, onReset }: { noResources: boolean; kind
   const label = KIND_LABEL[kind];
   return (
     <div className="card flex flex-col items-center px-6 py-14 text-center">
-      <span className="flex size-14 items-center justify-center rounded-2xl bg-brand-500/10 text-brand-600 dark:text-brand-300">
+      <span className="flex size-14 items-center justify-center rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-300">
         <CalendarSearch className="size-7" />
       </span>
       {noResources ? (
@@ -184,7 +172,7 @@ function EmptyState({ noResources, kind, onReset }: { noResources: boolean; kind
           <h3 className="mt-4 text-lg font-semibold">
             Aucun{kind === "room" ? "e" : ""} {label.one} configuré{kind === "room" ? "e" : ""}
           </h3>
-          <p className="mt-1 max-w-md text-sm text-slate-500">
+          <p className="mt-1 max-w-md text-sm text-zinc-500">
             {kind === "room"
               ? "Les salles sont lues depuis Exchange (boîtes aux lettres de salle). Demandez à votre administrateur Microsoft 365 de les créer, ou déclarez-les dans catalog.json."
               : "Les véhicules sont des boîtes aux lettres « équipement » Exchange, déclarées dans catalog.json par votre administrateur."}
@@ -195,7 +183,7 @@ function EmptyState({ noResources, kind, onReset }: { noResources: boolean; kind
           <h3 className="mt-4 text-lg font-semibold">
             Aucun{kind === "room" ? "e" : ""} {label.one} ne correspond à vos critères
           </h3>
-          <p className="mt-1 text-sm text-slate-500">Essayez d'élargir votre recherche.</p>
+          <p className="mt-1 text-sm text-zinc-500">Essayez d'élargir votre recherche.</p>
           <Button variant="soft" className="mt-5" icon={<RotateCcw />} onClick={onReset}>
             Réinitialiser les filtres
           </Button>
@@ -208,11 +196,11 @@ function EmptyState({ noResources, kind, onReset }: { noResources: boolean; kind
 function ErrorState({ message }: { message: string }) {
   return (
     <div className="card flex flex-col items-center px-6 py-14 text-center">
-      <span className="flex size-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600">
+      <span className="flex size-14 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600">
         <TriangleAlert className="size-7" />
       </span>
       <h3 className="mt-4 text-lg font-semibold">Connexion à Microsoft 365 impossible</h3>
-      <p className="mt-1 max-w-md text-sm text-slate-500">{message}</p>
+      <p className="mt-1 max-w-md text-sm text-zinc-500">{message}</p>
       <Button variant="soft" className="mt-5" icon={<RotateCcw />} onClick={() => window.location.reload()}>
         Recharger
       </Button>

@@ -211,7 +211,7 @@ export class DemoBookingService implements BookingService {
   }
 
   async suggestPeople(): Promise<Person[]> {
-    return [DEMO_PEOPLE[3], DEMO_PEOPLE[2], DEMO_PEOPLE[9], DEMO_PEOPLE[0], DEMO_PEOPLE[1], DEMO_GROUPS[0]];
+    return [3, 2, 9, 0, 1, 12, 5, 13, 8, 18].map((i) => DEMO_PEOPLE[i]).concat(DEMO_GROUPS[0]);
   }
 
   async searchPeople(query: string): Promise<Person[]> {

@@ -1,19 +1,17 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#4f46e5" />
-    <meta name="description" content="Réservez une salle ou un véhicule et invitez vos collègues en quelques secondes — synchronisé avec Outlook et Teams." />
+    <meta name="theme-color" content="#0c0c0e" />
+    <meta name="description" content="Réservez une salle ou un véhicule et invitez vos collègues — synchronisé avec Outlook et Teams." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Réza · Réservations</title>
     <script>
-      // Applique le thème avant le premier rendu pour éviter le flash.
+      // Thème sombre par défaut ; le choix « clair » de l'utilisateur est mémorisé.
       (function () {
         try {
-          var t = localStorage.getItem("reza.theme");
-          var dark = t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-          if (dark) document.documentElement.classList.add("dark");
+          if (localStorage.getItem("reza.theme") === "light") document.documentElement.classList.remove("dark");
         } catch (e) {}
       })();
     </script>

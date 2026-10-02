@@ -21,7 +21,7 @@ export function Popover({ trigger, children, open, onOpenChange, align = "start"
           sideOffset={8}
           collisionPadding={12}
           className={cn(
-            "z-[60] rounded-3xl border border-slate-200/80 bg-white/95 p-3 shadow-2xl shadow-slate-900/10 backdrop-blur-xl outline-none dark:border-white/10 dark:bg-[#151827]/95",
+            "z-[60] rounded-xl border border-zinc-200/80 bg-white/95 p-3 shadow-2xl shadow-zinc-900/10 backdrop-blur-xl outline-none dark:border-white/10 dark:bg-[#161618]/95",
             "origin-[var(--radix-popover-content-transform-origin)] data-[state=open]:animate-pop",
             className,
           )}

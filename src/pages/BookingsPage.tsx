@@ -33,8 +33,8 @@ export function BookingsPage() {
     <div className="space-y-6">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Mes réservations</h1>
-          <p className="mt-1 text-slate-500 dark:text-slate-400">
+          <h1 className="text-2xl font-semibold tracking-tight">Mes réservations</h1>
+          <p className="mt-1 text-zinc-500 dark:text-zinc-400">
             {count > 0
               ? `${count} réservation${count > 1 ? "s" : ""} à venir · synchronisées avec Outlook et Teams`
               : "Synchronisées avec Outlook et Teams"}
@@ -53,7 +53,7 @@ export function BookingsPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }, (_, i) => (
-            <div key={i} className="skeleton h-28 rounded-3xl" />
+            <div key={i} className="skeleton h-28 rounded-xl" />
           ))}
         </div>
       ) : count === 0 ? (
@@ -62,9 +62,9 @@ export function BookingsPage() {
         <div className="space-y-8">
           {groups.map(([key, list]) => (
             <section key={key}>
-              <h2 className="sticky top-[72px] z-10 -mx-1 mb-3 flex items-center gap-2 px-1 py-1 text-sm font-semibold text-slate-500 backdrop-blur dark:text-slate-400">
+              <h2 className="sticky top-[72px] z-10 -mx-1 mb-3 flex items-center gap-2 px-1 py-1 text-sm font-semibold text-zinc-500 backdrop-blur dark:text-zinc-400">
                 {fmtRelativeDay(parseDayKey(key))}
-                <span className="rounded-full bg-slate-200/70 px-2 text-[11px] text-slate-600 dark:bg-white/10 dark:text-slate-300">
+                <span className="rounded-full bg-zinc-200/70 px-2 text-[11px] text-zinc-600 dark:bg-white/10 dark:text-zinc-300">
                   {list.length}
                 </span>
               </h2>
@@ -90,8 +90,8 @@ const RESOURCE_STATUS: Record<ResponseStatus, { label: string; className: string
   organizer: { label: "Confirmée", className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300", icon: CircleCheck },
   tentativelyAccepted: { label: "Provisoire", className: "bg-amber-500/10 text-amber-700 dark:text-amber-300", icon: CircleDashed },
   declined: { label: "Refusée", className: "bg-rose-500/10 text-rose-700 dark:text-rose-300", icon: CircleX },
-  none: { label: "En attente", className: "bg-slate-500/10 text-slate-600 dark:text-slate-300", icon: Clock },
-  notResponded: { label: "En attente", className: "bg-slate-500/10 text-slate-600 dark:text-slate-300", icon: Clock },
+  none: { label: "En attente", className: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-300", icon: Clock },
+  notResponded: { label: "En attente", className: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-300", icon: Clock },
 };
 
 function BookingCard({ booking, onCancel }: { booking: Booking; onCancel: () => void }) {
@@ -122,9 +122,9 @@ function BookingCard({ booking, onCancel }: { booking: Booking; onCancel: () => 
       />
 
       <div className="flex items-center gap-4 sm:w-28 sm:flex-col sm:items-start sm:gap-0 sm:pl-2">
-        <p className="text-xl font-bold tracking-tight tabular-nums">{fmtTime(booking.start)}</p>
-        <p className="text-sm text-slate-500 tabular-nums dark:text-slate-400">
-          {fmtTime(booking.end)} <span className="text-slate-400">· {fmtDuration(minutes)}</span>
+        <p className="text-lg font-medium tabular-nums">{fmtTime(booking.start)}</p>
+        <p className="text-sm text-zinc-500 tabular-nums dark:text-zinc-400">
+          {fmtTime(booking.end)} <span className="text-zinc-400">· {fmtDuration(minutes)}</span>
         </p>
         {countdown && (
           <span
@@ -138,17 +138,17 @@ function BookingCard({ booking, onCancel }: { booking: Booking; onCancel: () => 
         )}
       </div>
 
-      <div className="min-w-0 flex-1 sm:border-l sm:border-slate-200/80 sm:pl-5 dark:sm:border-white/10">
+      <div className="min-w-0 flex-1 sm:border-l sm:border-zinc-200/80 sm:pl-5 dark:sm:border-white/10">
         <h3 className="truncate text-base font-semibold">{booking.subject}</h3>
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-slate-600 dark:text-slate-300">
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-zinc-600 dark:text-zinc-300">
           <span className="flex items-center gap-1.5">
-            <Icon className="size-4 text-slate-400" /> {booking.resourceName}
+            <Icon className="size-4 text-zinc-400" /> {booking.resourceName}
           </span>
           <span className={cn("flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold", status.className)}>
             <status.icon className="size-3" /> {status.label}
           </span>
           {booking.teamsJoinUrl && (
-            <span className="flex items-center gap-1 text-xs text-slate-500">
+            <span className="flex items-center gap-1 text-xs text-zinc-500">
               <TeamsLogo className="size-4" /> Teams
             </span>
           )}
@@ -156,7 +156,7 @@ function BookingCard({ booking, onCancel }: { booking: Booking; onCancel: () => 
         {booking.attendees.length > 0 && (
           <div className="mt-3 flex items-center gap-2.5">
             <AvatarStack people={booking.attendees} max={5} size={26} />
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-zinc-500">
               {booking.attendees.length} invité{booking.attendees.length > 1 ? "s" : ""}
               {accepted > 0 && ` · ${accepted} accepté${accepted > 1 ? "s" : ""}`}
             </span>
@@ -170,7 +170,7 @@ function BookingCard({ booking, onCancel }: { booking: Booking; onCancel: () => 
             href={booking.teamsJoinUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl bg-teams px-3.5 text-[13px] font-semibold text-white transition hover:brightness-110"
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-teams px-3.5 text-[13px] font-semibold text-white transition hover:brightness-110"
           >
             <TeamsLogo className="size-4" /> Rejoindre
           </a>
@@ -180,7 +180,7 @@ function BookingCard({ booking, onCancel }: { booking: Booking; onCancel: () => 
             href={booking.webLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-[13px] font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3.5 text-[13px] font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-white/10 dark:bg-white/5 dark:text-zinc-200"
           >
             <ExternalLink className="size-4" /> Outlook
           </a>
@@ -222,13 +222,13 @@ function CancelDialog({ booking, onClose }: { booking: Booking | null; onClose: 
   return (
     <AlertDialog.Root open={Boolean(booking)} onOpenChange={(o) => !o && onClose()}>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm" />
-        <AlertDialog.Content className="data-[state=open]:animate-pop fixed top-1/2 left-1/2 z-50 w-[min(440px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-white/10 dark:bg-[#151827]">
-          <span className="flex size-12 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600">
+        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-zinc-950/40 backdrop-blur-sm" />
+        <AlertDialog.Content className="data-[state=open]:animate-pop fixed top-1/2 left-1/2 z-50 w-[min(440px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-white/10 dark:bg-[#161618]">
+          <span className="flex size-12 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600">
             <Trash className="size-6" />
           </span>
           <AlertDialog.Title className="mt-4 text-lg font-semibold">Annuler cette réservation ?</AlertDialog.Title>
-          <AlertDialog.Description className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <AlertDialog.Description className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
             « {booking?.subject} » — {booking && fmtRelativeDay(booking.start).toLowerCase()} à {booking && fmtTime(booking.start)}.{" "}
             {booking &&
               `${booking.resourceName} sera libéré${booking.resource?.kind === "room" ? "e" : ""}${booking.attendees.length ? " et les participants seront prévenus" : ""}.`}
@@ -238,7 +238,7 @@ function CancelDialog({ booking, onClose }: { booking: Booking | null; onClose: 
             onChange={(e) => setComment(e.target.value)}
             rows={2}
             placeholder="Message facultatif (ex. réunion reportée à jeudi)"
-            className="mt-4 w-full resize-none rounded-2xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-500/15 dark:border-white/10 dark:bg-white/5"
+            className="mt-4 w-full resize-none rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-500/15 dark:border-white/10 dark:bg-white/5"
           />
           <div className="mt-5 flex justify-end gap-2">
             <AlertDialog.Cancel asChild>
@@ -258,13 +258,12 @@ function Empty() {
   return (
     <div className="card flex flex-col items-center px-6 py-16 text-center">
       <div className="relative">
-        <span className="bg-brand-gradient flex size-16 items-center justify-center rounded-3xl text-white shadow-[var(--shadow-glow)]">
-          <CalendarPlus className="size-8" />
+        <span className="flex size-12 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 dark:border-white/[0.08]">
+          <CalendarPlus className="size-5" />
         </span>
-        <span className="absolute -top-2 -right-3 text-2xl">✨</span>
       </div>
-      <h3 className="mt-5 text-xl font-semibold">Aucune réservation à venir</h3>
-      <p className="mt-1 max-w-sm text-sm text-slate-500">
+      <h3 className="mt-5 text-base font-semibold">Aucune réservation à venir</h3>
+      <p className="mt-1 max-w-sm text-sm text-zinc-500">
         Réservez une salle ou un véhicule en quelques secondes — vos invités le recevront directement dans Outlook et Teams.
       </p>
       <Button className="mt-6" size="lg" icon={<CalendarPlus />} onClick={() => navigate("book")}>

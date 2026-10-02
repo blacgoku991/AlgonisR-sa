@@ -239,9 +239,9 @@ export class GraphBookingService implements BookingService {
 
   async suggestPeople(): Promise<Person[]> {
     const page = await graph<{ value: GraphPerson[] }>(
-      "/me/people?$top=12&$select=id,displayName,jobTitle,department,scoredEmailAddresses,personType",
+      "/me/people?$top=25&$select=id,displayName,jobTitle,department,scoredEmailAddresses,personType",
     );
-    return this.mapPeople(page.value).slice(0, 8);
+    return this.mapPeople(page.value).slice(0, 15);
   }
 
   async searchPeople(query: string): Promise<Person[]> {

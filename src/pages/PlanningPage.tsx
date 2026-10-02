@@ -123,8 +123,8 @@ export function PlanningPage() {
     <div className="space-y-5">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Planning</h1>
-          <p className="mt-1 flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+          <h1 className="text-2xl font-semibold tracking-tight">Planning</h1>
+          <p className="mt-1 flex items-center gap-1.5 text-zinc-500 dark:text-zinc-400">
             <MousePointerClick className="size-4" /> Cliquez ou glissez sur un créneau libre pour réserver.
           </p>
         </div>
@@ -132,7 +132,7 @@ export function PlanningPage() {
       </header>
 
       <div className="card overflow-hidden">
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/80 px-4 py-3 dark:border-white/10">
+        <div className="flex flex-wrap items-center gap-2 border-b border-zinc-200/80 px-4 py-3 dark:border-white/10">
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -158,8 +158,8 @@ export function PlanningPage() {
 
         <div className="flex">
           {/* Colonne des ressources */}
-          <div className="w-36 shrink-0 border-r border-slate-200/80 sm:w-52 dark:border-white/10">
-            <div className="h-10 border-b border-slate-200/80 dark:border-white/10" />
+          <div className="w-36 shrink-0 border-r border-zinc-200/80 sm:w-52 dark:border-white/10">
+            <div className="h-10 border-b border-zinc-200/80 dark:border-white/10" />
             {isLoading &&
               Array.from({ length: 5 }, (_, i) => (
                 <div key={i} className="flex items-center px-4" style={{ height: ROW_HEIGHT }}>
@@ -169,14 +169,14 @@ export function PlanningPage() {
             {rows.map((r) => (
               <div
                 key={r.id}
-                className="flex flex-col justify-center border-b border-slate-100 px-3 last:border-b-0 sm:px-4 dark:border-white/5"
+                className="flex flex-col justify-center border-b border-zinc-100 px-3 last:border-b-0 sm:px-4 dark:border-white/5"
                 style={{ height: ROW_HEIGHT }}
               >
                 <p className="flex items-center gap-2 truncate text-sm font-semibold">
                   <span className="size-2.5 shrink-0 rounded-full" style={{ background: `oklch(0.62 0.18 ${r.hue ?? 250})` }} />
                   <span className="truncate">{r.name}</span>
                 </p>
-                <p className="mt-0.5 flex items-center gap-1 truncate pl-[18px] text-xs text-slate-500 dark:text-slate-400">
+                <p className="mt-0.5 flex items-center gap-1 truncate pl-[18px] text-xs text-zinc-500 dark:text-zinc-400">
                   {r.capacity !== undefined && (
                     <>
                       <Users className="size-3" /> {r.capacity}
@@ -192,14 +192,14 @@ export function PlanningPage() {
           {/* Grille horaire */}
           <div ref={scroller} className="scrollbar-thin relative min-w-0 flex-1 overflow-x-auto">
             <div className="relative" style={{ width: gridWidth }}>
-              <div className="sticky top-0 z-10 flex h-10 border-b border-slate-200/80 bg-white/60 backdrop-blur dark:border-white/10 dark:bg-transparent">
+              <div className="sticky top-0 z-10 flex h-10 border-b border-zinc-200/80 bg-white/60 backdrop-blur dark:border-white/10 dark:bg-transparent">
                 {Array.from({ length: hours }, (_, i) => (
                   <div
                     key={i}
-                    className="relative shrink-0 border-l border-slate-200/70 first:border-l-0 dark:border-white/[0.06]"
+                    className="relative shrink-0 border-l border-zinc-200/70 first:border-l-0 dark:border-white/[0.06]"
                     style={{ width: HOUR_WIDTH }}
                   >
-                    <span className="absolute top-2.5 left-2 text-xs font-semibold text-slate-400 tabular-nums">
+                    <span className="absolute top-2.5 left-2 text-xs font-semibold text-zinc-400 tabular-nums">
                       {String(config.dayStartHour + i).padStart(2, "0")}:00
                     </span>
                   </div>
@@ -213,7 +213,7 @@ export function PlanningPage() {
                 return (
                   <div
                     key={r.id}
-                    className="relative touch-pan-x border-b border-slate-100 last:border-b-0 dark:border-white/5"
+                    className="relative touch-pan-x border-b border-zinc-100 last:border-b-0 dark:border-white/5"
                     style={{ height: ROW_HEIGHT }}
                     onPointerDown={onPointerDown(r)}
                     onPointerMove={onPointerMove(r)}
@@ -224,11 +224,11 @@ export function PlanningPage() {
                     {Array.from({ length: hours }, (_, i) => (
                       <div
                         key={i}
-                        className="absolute inset-y-0 border-l border-slate-100 dark:border-white/[0.05]"
+                        className="absolute inset-y-0 border-l border-zinc-100 dark:border-white/[0.05]"
                         style={{ left: i * HOUR_WIDTH }}
                       >
                         <div
-                          className="absolute inset-y-3 border-l border-dashed border-slate-100 dark:border-white/[0.04]"
+                          className="absolute inset-y-3 border-l border-dashed border-zinc-100 dark:border-white/[0.04]"
                           style={{ left: HOUR_WIDTH / 2 }}
                         />
                       </div>
@@ -250,7 +250,7 @@ export function PlanningPage() {
 
                     {hovering && (
                       <div
-                        className="pointer-events-none absolute inset-y-2 rounded-xl border-2 border-dashed border-brand-400/70 bg-brand-500/5"
+                        className="pointer-events-none absolute inset-y-2 rounded-md border-2 border-dashed border-brand-400/70 bg-brand-500/5"
                         style={{ left: hovering.q * Q_WIDTH, width: Q_WIDTH * Math.max(1, Math.round(Math.min(duration, 240) / 15)) }}
                       >
                         <span className="absolute top-1 left-1.5 text-[11px] font-semibold text-brand-600 tabular-nums dark:text-brand-300">
@@ -261,7 +261,7 @@ export function PlanningPage() {
 
                     {dragging && (
                       <div
-                        className="bg-brand-gradient pointer-events-none absolute inset-y-2 rounded-xl px-2 py-1 text-[11px] font-semibold text-white shadow-[var(--shadow-glow)]"
+                        className="bg-brand-600 pointer-events-none absolute inset-y-2 rounded-md px-2 py-1 text-[11px] font-semibold text-white"
                         style={{
                           left: Math.min(dragging.anchor, dragging.current) * Q_WIDTH,
                           width: (Math.abs(dragging.current - dragging.anchor) + 1) * Q_WIDTH,
@@ -285,7 +285,7 @@ export function PlanningPage() {
         </div>
 
         {!isLoading && rows.length === 0 && (
-          <p className="px-6 py-12 text-center text-sm text-slate-500">
+          <p className="px-6 py-12 text-center text-sm text-zinc-500">
             Aucun{kind === "room" ? "e" : ""} {KIND_LABEL[kind].one} à afficher.
           </p>
         )}
@@ -303,12 +303,12 @@ function BusyBlock({ slot, mine, x, w, max }: { slot: BusySlot; mine?: boolean; 
       onPointerDown={(e) => e.stopPropagation()}
       title={`${fmtTime(slot.start)} – ${fmtTime(slot.end)}${slot.subject ? ` · ${slot.subject}` : ""}`}
       className={cn(
-        "absolute inset-y-2 cursor-not-allowed overflow-hidden rounded-xl border px-2 py-1 text-[11px] leading-tight",
+        "absolute inset-y-2 cursor-not-allowed overflow-hidden rounded-md border px-2 py-1 text-[11px] leading-tight",
         mine
-          ? "bg-brand-gradient border-transparent text-white shadow-[var(--shadow-glow)]"
+          ? "bg-brand-600 border-transparent text-white"
           : slot.status === "tentative"
             ? "border-amber-300/70 bg-amber-100/80 text-amber-900 dark:border-amber-400/30 dark:bg-amber-400/15 dark:text-amber-100"
-            : "border-slate-200 bg-slate-100 text-slate-600 dark:border-white/10 dark:bg-white/[0.07] dark:text-slate-300",
+            : "border-zinc-200 bg-zinc-100 text-zinc-600 dark:border-white/10 dark:bg-white/[0.07] dark:text-zinc-300",
       )}
       style={{ left: left + 1, width: width - 2 }}
     >
@@ -322,15 +322,15 @@ function BusyBlock({ slot, mine, x, w, max }: { slot: BusySlot; mine?: boolean; 
 
 function Legend() {
   return (
-    <div className="ml-auto hidden items-center gap-4 text-xs text-slate-500 md:flex dark:text-slate-400">
+    <div className="ml-auto hidden items-center gap-4 text-xs text-zinc-500 md:flex dark:text-zinc-400">
       <span className="flex items-center gap-1.5">
-        <span className="size-3 rounded border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/10" /> Réservé
+        <span className="size-3 rounded border border-zinc-200 bg-zinc-100 dark:border-white/10 dark:bg-white/10" /> Réservé
       </span>
       <span className="flex items-center gap-1.5">
         <span className="size-3 rounded border border-amber-300 bg-amber-100" /> Provisoire
       </span>
       <span className="flex items-center gap-1.5">
-        <span className="bg-brand-gradient size-3 rounded" /> Vos réservations
+        <span className="bg-brand-600 size-3 rounded" /> Vos réservations
       </span>
       <span className="flex items-center gap-1.5">
         <span className="h-3 w-0.5 bg-rose-500" /> Maintenant

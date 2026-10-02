@@ -50,7 +50,7 @@ export function App() {
 
   return (
     <>
-      <Toaster position="top-center" richColors closeButton theme={theme} toastOptions={{ className: "!rounded-2xl" }} />
+      <Toaster position="top-center" closeButton theme={theme} toastOptions={{ className: "!rounded-lg" }} />
       {status === "loading" ? (
         <Splash />
       ) : status === "signed-out" ? (
@@ -69,13 +69,7 @@ function Routes() {
   const view = useView();
   return (
     <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={view}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
-      >
+      <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
         {view === "planning" ? <PlanningPage /> : view === "bookings" ? <BookingsPage /> : <BookPage />}
       </motion.div>
     </AnimatePresence>
@@ -84,11 +78,9 @@ function Routes() {
 
 function Splash() {
   return (
-    <div className="ambient flex min-h-dvh flex-col items-center justify-center gap-5">
-      <motion.div animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}>
-        <Logo className="size-16 drop-shadow-[0_12px_30px_rgba(99,102,241,0.45)]" />
-      </motion.div>
-      <p className="text-sm font-medium text-slate-500">Connexion à Microsoft 365…</p>
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-4">
+      <Logo className="size-10" />
+      <p className="text-sm text-zinc-500">Connexion à Microsoft 365…</p>
     </div>
   );
 }

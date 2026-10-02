@@ -5,7 +5,7 @@ type Theme = "light" | "dark";
 
 function apply(theme: Theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#0a0b14" : "#4f46e5");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#0c0c0e" : "#ffffff");
 }
 
 function initial(): Theme {

@@ -17,7 +17,7 @@
 | 🗓️ **Planning visuel** | Vue « Gantt » de toutes les ressources : cliquez ou glissez sur un créneau libre pour réserver. |
 | 📋 **Mes réservations** | Rejoindre la réunion Teams, ouvrir dans Outlook, voir qui a accepté, annuler (les invités sont prévenus). |
 | 🧩 **Dans Teams et Outlook** | L'application s'installe dans Teams, Outlook et l'application Microsoft 365, avec authentification unique (aucune connexion supplémentaire). |
-| 🌗 **Soigné** | Thème clair/sombre (suit Teams), mobile, animations fluides, accessible au clavier. |
+| 🌗 **Sobre et lisible** | Thème sombre par défaut (clair au choix, suit Teams dans Teams), mobile, accessible au clavier. |
 
 <table>
   <tr>
@@ -30,7 +30,7 @@
   </tr>
   <tr>
     <td><img src="docs/screenshots/vehicules.png" alt="Véhicules" /></td>
-    <td><img src="docs/screenshots/theme-sombre.png" alt="Thème sombre" /></td>
+    <td><img src="docs/screenshots/theme-clair.png" alt="Thème clair" /></td>
   </tr>
 </table>
 

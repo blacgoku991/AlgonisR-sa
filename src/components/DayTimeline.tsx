@@ -35,7 +35,7 @@ export function DayTimeline({ day, busy, selection, className }: DayTimelineProp
             title={`${fmtTime(slot.start)} – ${fmtTime(slot.end)}${slot.subject ? ` · ${slot.subject}` : ""}`}
             className={cn(
               "absolute inset-y-0 rounded-[3px]",
-              slot.status === "tentative" ? "bg-amber-400/70" : "bg-slate-400/70 dark:bg-slate-500/80",
+              slot.status === "tentative" ? "bg-amber-400/70" : "bg-zinc-400/70 dark:bg-zinc-500/80",
               slot.optimistic && "bg-brand-500",
             )}
             style={{ left: `${pct(slot.start)}%`, width: `${Math.max(0.8, pct(slot.end) - pct(slot.start))}%` }}
@@ -52,7 +52,7 @@ export function DayTimeline({ day, busy, selection, className }: DayTimelineProp
         )}
         {showNow && <div className="absolute inset-y-0 w-0.5 bg-rose-500" style={{ left: `${pct(now)}%` }} />}
       </div>
-      <div className="relative mt-1 h-3 text-[10px] font-medium text-slate-400 tabular-nums dark:text-slate-500">
+      <div className="relative mt-1 h-3 text-[10px] font-medium text-zinc-400 tabular-nums dark:text-zinc-500">
         {labels.map((h) => (
           <span
             key={h}

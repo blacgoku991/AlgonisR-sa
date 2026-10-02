@@ -50,7 +50,7 @@ export function WhenPicker({ kind }: { kind: ResourceKind }) {
 
 function Label({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400 [&_svg]:size-3.5">
+    <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-zinc-500 uppercase dark:text-zinc-400 [&_svg]:size-3.5">
       {icon}
       {children}
     </div>
@@ -90,23 +90,23 @@ function DateStrip() {
               aria-pressed={active}
               aria-label={format(d, "EEEE d MMMM", { locale: frLocale })}
               className={cn(
-                "relative flex w-[54px] shrink-0 snap-start flex-col items-center rounded-2xl py-2 transition-colors",
-                active ? "text-white" : "text-slate-600 hover:bg-slate-900/5 dark:text-slate-300 dark:hover:bg-white/5",
+                "relative flex w-[54px] shrink-0 snap-start flex-col items-center rounded-lg py-2 transition-colors",
+                active ? "text-white dark:text-zinc-900" : "text-zinc-600 hover:bg-zinc-900/5 dark:text-zinc-300 dark:hover:bg-white/5",
                 weekend && !active && "opacity-60",
               )}
             >
               {active && (
                 <motion.span
                   layoutId="day-pill"
-                  className="bg-brand-gradient absolute inset-0 rounded-2xl shadow-[var(--shadow-glow)]"
+                  className="bg-zinc-900 dark:bg-white absolute inset-0 rounded-lg"
                   transition={{ type: "spring", damping: 28, stiffness: 400 }}
                 />
               )}
-              <span className={cn("relative text-[11px] font-medium capitalize", active ? "text-white/80" : "text-slate-400")}>
+              <span className={cn("relative text-[11px] font-medium capitalize", active ? "opacity-70" : "text-zinc-400")}>
                 {i === 0 ? "Auj." : i === 1 ? "Dem." : fmtWeekday(d)}
               </span>
-              <span className="relative text-lg leading-6 font-bold tabular-nums">{d.getDate()}</span>
-              <span className={cn("relative text-[10px] capitalize", active ? "text-white/75" : "text-slate-400")}>{fmtMonthShort(d)}</span>
+              <span className="relative text-base leading-6 font-medium tabular-nums">{d.getDate()}</span>
+              <span className={cn("relative text-[10px] capitalize", active ? "opacity-70" : "text-zinc-400")}>{fmtMonthShort(d)}</span>
             </button>
           );
         })}
@@ -143,10 +143,10 @@ function MonthCalendarButton({ highlighted }: { highlighted: boolean }) {
       trigger={
         <button
           className={cn(
-            "flex w-[54px] shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-dashed text-[10px] font-medium transition-colors",
+            "flex w-[54px] shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-dashed text-[10px] font-medium transition-colors",
             highlighted
-              ? "bg-brand-gradient border-transparent text-white shadow-[var(--shadow-glow)]"
-              : "border-slate-300 text-slate-500 hover:border-brand-400 hover:text-brand-600 dark:border-white/15 dark:text-slate-400",
+              ? "bg-zinc-900 dark:bg-white border-transparent text-white dark:text-zinc-900"
+              : "border-zinc-300 text-zinc-500 hover:border-brand-400 hover:text-brand-600 dark:border-white/15 dark:text-zinc-400",
           )}
           aria-label="Choisir une autre date"
         >
@@ -158,7 +158,7 @@ function MonthCalendarButton({ highlighted }: { highlighted: boolean }) {
     >
       <div className="mb-2 flex items-center justify-between px-1">
         <button
-          className="rounded-xl p-1.5 hover:bg-slate-100 dark:hover:bg-white/10"
+          className="rounded-md p-1.5 hover:bg-zinc-100 dark:hover:bg-white/10"
           onClick={() => setMonth(addMonths(month, -1))}
           aria-label="Mois précédent"
         >
@@ -166,7 +166,7 @@ function MonthCalendarButton({ highlighted }: { highlighted: boolean }) {
         </button>
         <span className="text-sm font-semibold capitalize">{format(month, "MMMM yyyy", { locale: frLocale })}</span>
         <button
-          className="rounded-xl p-1.5 hover:bg-slate-100 dark:hover:bg-white/10"
+          className="rounded-md p-1.5 hover:bg-zinc-100 dark:hover:bg-white/10"
           onClick={() => setMonth(addMonths(month, 1))}
           aria-label="Mois suivant"
         >
@@ -175,7 +175,7 @@ function MonthCalendarButton({ highlighted }: { highlighted: boolean }) {
       </div>
       <div className="grid grid-cols-7 gap-0.5 text-center">
         {["L", "M", "M", "J", "V", "S", "D"].map((d, i) => (
-          <span key={i} className="py-1 text-[11px] font-semibold text-slate-400">
+          <span key={i} className="py-1 text-[11px] font-semibold text-zinc-400">
             {d}
           </span>
         ))}
@@ -189,9 +189,11 @@ function MonthCalendarButton({ highlighted }: { highlighted: boolean }) {
                 disabled={past}
                 onClick={() => setDay(dayKey(d))}
                 className={cn(
-                  "aspect-square rounded-xl text-sm tabular-nums transition-colors disabled:cursor-not-allowed disabled:opacity-30",
-                  active ? "bg-brand-gradient font-semibold text-white" : "hover:bg-slate-100 dark:hover:bg-white/10",
-                  !inMonth && !active && "text-slate-400",
+                  "aspect-square rounded-md text-sm tabular-nums transition-colors disabled:cursor-not-allowed disabled:opacity-30",
+                  active
+                    ? "bg-zinc-900 dark:bg-white font-semibold text-white dark:text-zinc-900"
+                    : "hover:bg-zinc-100 dark:hover:bg-white/10",
+                  !inMonth && !active && "text-zinc-400",
                   isSameDay(d, today) && !active && "font-bold text-brand-600 dark:text-brand-300",
                 )}
               >
@@ -230,9 +232,9 @@ function TimePicker() {
       open={open}
       onOpenChange={setOpen}
       trigger={
-        <button className="flex h-[66px] items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 shadow-sm transition-colors hover:border-brand-300 dark:border-white/10 dark:bg-white/5 dark:hover:border-brand-400/50">
-          <span className="text-2xl font-bold tracking-tight tabular-nums">{time}</span>
-          <ChevronDown className={cn("size-4 text-slate-400 transition-transform", open && "rotate-180")} />
+        <button className="flex h-[66px] items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 shadow-sm transition-colors hover:border-brand-300 dark:border-white/10 dark:bg-white/5 dark:hover:border-brand-400/50">
+          <span className="text-xl font-medium tabular-nums">{time}</span>
+          <ChevronDown className={cn("size-4 text-zinc-400 transition-transform", open && "rotate-180")} />
         </button>
       }
       className="w-[292px] p-2"
@@ -249,10 +251,12 @@ function TimePicker() {
                 disabled={past}
                 onClick={() => setTime(t)}
                 className={cn(
-                  "rounded-xl py-2 text-sm tabular-nums transition-colors disabled:cursor-not-allowed disabled:opacity-25",
-                  active ? "bg-brand-gradient font-semibold text-white" : "hover:bg-slate-100 dark:hover:bg-white/10",
+                  "rounded-md py-2 text-sm tabular-nums transition-colors disabled:cursor-not-allowed disabled:opacity-25",
+                  active
+                    ? "bg-zinc-900 dark:bg-white font-semibold text-white dark:text-zinc-900"
+                    : "hover:bg-zinc-100 dark:hover:bg-white/10",
                   fullHour && !active && "font-semibold",
-                  !fullHour && !active && "text-slate-500 dark:text-slate-400",
+                  !fullHour && !active && "text-zinc-500 dark:text-zinc-400",
                 )}
               >
                 {t}
@@ -276,21 +280,21 @@ function DurationPicker({ kind }: { kind: ResourceKind }) {
     kind === "vehicle" && m === 240 ? "½ journée" : kind === "vehicle" && m === 540 ? "Journée" : fmtDuration(m);
 
   return (
-    <div className="flex h-[66px] items-center gap-1 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm dark:border-white/10 dark:bg-white/5">
+    <div className="flex h-[66px] items-center gap-1 rounded-lg border border-zinc-200 bg-white p-1.5 shadow-sm dark:border-white/10 dark:bg-white/5">
       {presets.map((m) => (
         <button
           key={m}
           onClick={() => setDuration(m)}
           aria-pressed={duration === m}
           className={cn(
-            "relative h-full rounded-xl px-2.5 text-[13px] font-semibold whitespace-nowrap transition-colors sm:px-3",
-            duration === m ? "text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10",
+            "relative h-full rounded-md px-2.5 text-[13px] font-semibold whitespace-nowrap transition-colors sm:px-3",
+            duration === m ? "text-white dark:text-zinc-900" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/10",
           )}
         >
           {duration === m && (
             <motion.span
               layoutId={`duration-${kind}`}
-              className="bg-brand-gradient absolute inset-0 rounded-xl"
+              className="bg-zinc-900 dark:bg-white absolute inset-0 rounded-md"
               transition={{ type: "spring", damping: 30, stiffness: 400 }}
             />
           )}
@@ -329,8 +333,10 @@ function CustomEnd({ active, kind }: { active: boolean; kind: ResourceKind }) {
       trigger={
         <button
           className={cn(
-            "h-full rounded-xl px-2.5 text-[13px] font-semibold whitespace-nowrap transition-colors sm:px-3",
-            active ? "bg-brand-gradient text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10",
+            "h-full rounded-md px-2.5 text-[13px] font-semibold whitespace-nowrap transition-colors sm:px-3",
+            active
+              ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
+              : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/10",
           )}
         >
           {active ? fmtDuration(duration) : "Autre…"}
@@ -345,13 +351,13 @@ function CustomEnd({ active, kind }: { active: boolean; kind: ResourceKind }) {
             value={endDay}
             min={day}
             onChange={(e) => e.target.value && setEndDay(e.target.value)}
-            className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-sm dark:border-white/10 dark:bg-white/5 dark:[color-scheme:dark]"
+            className="h-11 min-w-0 flex-1 rounded-md border border-zinc-200 bg-white px-3 text-sm dark:border-white/10 dark:bg-white/5 dark:[color-scheme:dark]"
           />
         )}
         <select
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
-          className="h-11 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-sm tabular-nums dark:border-white/10 dark:bg-white/5 dark:[color-scheme:dark]"
+          className="h-11 flex-1 rounded-md border border-zinc-200 bg-white px-3 text-sm tabular-nums dark:border-white/10 dark:bg-white/5 dark:[color-scheme:dark]"
         >
           {ends.map((t) => (
             <option key={t} value={t} disabled={kind === "room" && timeToMinutes(t) <= timeToMinutes(time)}>
@@ -361,14 +367,14 @@ function CustomEnd({ active, kind }: { active: boolean; kind: ResourceKind }) {
         </select>
       </div>
       <div className="mt-3 flex items-center justify-between gap-2 px-1">
-        <span className={cn("text-xs", valid ? "text-slate-500" : "text-rose-600")}>
+        <span className={cn("text-xs", valid ? "text-zinc-500" : "text-rose-600")}>
           {valid ? `Durée : ${fmtDuration(minutes)}` : "La fin doit suivre le début"}
         </span>
         <PopoverClose asChild>
           <button
             disabled={!valid}
             onClick={() => setDuration(minutes)}
-            className="bg-brand-gradient rounded-xl px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+            className="bg-zinc-900 dark:bg-white rounded-md px-4 py-2 text-sm font-semibold text-white dark:text-zinc-900 disabled:opacity-40"
           >
             Valider
           </button>

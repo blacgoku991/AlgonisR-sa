@@ -34,7 +34,7 @@ export function Sheet({ open, onOpenChange, title, description, children, classN
           <Dialog.Portal forceMount>
             <Dialog.Overlay asChild forceMount>
               <motion.div
-                className="fixed inset-0 z-50 bg-slate-950/30 backdrop-blur-[3px] dark:bg-black/50"
+                className="fixed inset-0 z-50 bg-black/40 dark:bg-black/60"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -44,20 +44,20 @@ export function Sheet({ open, onOpenChange, title, description, children, classN
             <Dialog.Content asChild forceMount {...(description ? {} : { "aria-describedby": undefined })}>
               <motion.div
                 className={cn(
-                  "fixed z-50 flex flex-col overflow-hidden bg-white shadow-2xl outline-none dark:bg-[#11131f]",
+                  "fixed z-50 flex flex-col overflow-hidden bg-white shadow-2xl outline-none dark:bg-[#111113]",
                   desktop
-                    ? "top-3 right-3 bottom-3 w-[min(560px,calc(100vw-24px))] rounded-[28px] border border-slate-200/70 dark:border-white/10"
-                    : "inset-x-0 bottom-0 max-h-[94dvh] rounded-t-[28px]",
+                    ? "top-0 right-0 bottom-0 w-[min(520px,100vw)] border-l border-zinc-200 dark:border-white/[0.08]"
+                    : "inset-x-0 bottom-0 max-h-[94dvh] rounded-t-xl",
                   className,
                 )}
-                initial={desktop ? { x: 40, opacity: 0 } : { y: "100%" }}
+                initial={desktop ? { x: 24, opacity: 0 } : { y: "100%" }}
                 animate={desktop ? { x: 0, opacity: 1 } : { y: 0 }}
-                exit={desktop ? { x: 40, opacity: 0 } : { y: "100%" }}
-                transition={{ type: "spring", damping: 32, stiffness: 380 }}
+                exit={desktop ? { x: 24, opacity: 0 } : { y: "100%" }}
+                transition={{ type: "tween", ease: [0.2, 0.8, 0.2, 1], duration: 0.22 }}
               >
                 <Dialog.Title className="sr-only">{title}</Dialog.Title>
                 {description && <Dialog.Description className="sr-only">{description}</Dialog.Description>}
-                {!desktop && <div className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-slate-300 dark:bg-slate-700" />}
+                {!desktop && <div className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-zinc-300 dark:bg-zinc-700" />}
                 {children}
               </motion.div>
             </Dialog.Content>
