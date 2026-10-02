@@ -22,9 +22,8 @@ export function BookPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden hero rounded-[2.5rem] px-5 pt-10 pb-6 sm:px-12 sm:pt-16 sm:pb-12">
-        <HeroDecor />
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <section className="relative overflow-hidden hero rounded-[2.5rem] px-6 pt-12 pb-8 sm:px-14 sm:pt-20 sm:pb-14">
+                <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             {me && (
               <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-surface/70 px-3.5 py-1.5 text-sm font-medium text-brand-700">
@@ -32,7 +31,7 @@ export function BookPage() {
                 Bonjour {me.givenName ?? me.name.split(" ")[0]}
               </p>
             )}
-            <h1 className="text-[34px] leading-[1.08] font-bold tracking-[-0.03em] sm:text-[52px]">
+            <h1 className="text-[32px] leading-[1.08] font-bold tracking-[-0.035em] sm:text-[60px]">
               {kind === "room" ? (
                 <>
                   Trouvez la <span className="text-brand-600">salle idéale</span>,<br className="hidden sm:block" /> en quelques secondes.
@@ -43,32 +42,21 @@ export function BookPage() {
                 </>
               )}
             </h1>
-            <p className="mt-4 max-w-xl text-base text-muted sm:text-lg">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Disponibilités en temps réel. L'invitation part dans Outlook et le calendrier Teams de chaque participant.
             </p>
           </div>
           <KindToggle value={kind} onChange={setKind} />
         </div>
-        <div className="relative mt-10">
+        <div className="relative mt-12 sm:mt-16">
           <SearchBar />
         </div>
       </section>
-      <div className="mt-8">
+      <div className="mt-14">
         <FilterChips resources={resources} onlyFree={onlyFree} setOnlyFree={setOnlyFree} />
       </div>
       <Results onlyFree={onlyFree} resetOnlyFree={() => setOnlyFree(false)} />
     </>
-  );
-}
-
-/** Formes douces en arrière-plan du bandeau d'accueil. */
-function HeroDecor() {
-  return (
-    <svg className="pointer-events-none absolute -top-24 -right-24 hidden h-[420px] sm:block w-[420px] text-brand-500 opacity-[0.14]" viewBox="0 0 200 200" aria-hidden>
-      <circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" strokeWidth="1" />
-      <circle cx="100" cy="100" r="70" fill="none" stroke="currentColor" strokeWidth="1" />
-      <circle cx="100" cy="100" r="44" fill="currentColor" />
-    </svg>
   );
 }
 
@@ -105,10 +93,10 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
   if (error) return <ErrorState message={error instanceof Error ? error.message : String(error)} />;
 
   return (
-    <section className="mt-10 min-w-0 space-y-8">
+    <section className="mt-16 min-w-0 space-y-10">
       <div className="flex items-baseline justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">
+          <h2 className="text-[28px] font-bold tracking-tight">
             {availability ? (
               <>
                 {freeCount} {freeCount > 1 ? label.many : label.one} disponible{freeCount > 1 ? "s" : ""}
@@ -118,7 +106,7 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
               <span className="text-muted">Recherche des disponibilités…</span>
             )}
           </h2>
-          <p className="mt-0.5 text-sm text-muted tabular-nums">
+          <p className="mt-2 text-[15px] text-muted tabular-nums">
             {fmtLongDate(start)} · {fmtTime(start)} – {fmtTime(end)} · {fmtDuration(minutes)}
           </p>
         </div>
@@ -135,8 +123,8 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
       )}
 
       {isLoading ? (
-        <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
-          {Array.from({ length: 6 }, (_, i) => (
+        <div className="grid gap-10 md:grid-cols-2">
+          {Array.from({ length: 4 }, (_, i) => (
             <ResourceCardSkeleton key={i} />
           ))}
         </div>
@@ -152,7 +140,7 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
         />
       ) : (
         <LayoutGroup>
-          <motion.div layout className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
+          <motion.div layout className="grid gap-10 md:grid-cols-2">
             <AnimatePresence initial={false} mode="popLayout">
               {items.map(({ resource, state }, index) => (
                 <ResourceCard

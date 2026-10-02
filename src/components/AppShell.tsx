@@ -66,8 +66,8 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
             </span>
           </a>
 
-          <p className="mt-10 mb-3 px-3 text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">Menu</p>
-          <nav className="space-y-1.5" aria-label="Navigation principale">
+          <p className="mt-14 mb-4 px-3 text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">Menu</p>
+          <nav className="space-y-2.5" aria-label="Navigation principale">
             {items.map(({ view: v, label, hint, icon: Icon, tone }) => {
               const active = view === v;
               return (
@@ -105,7 +105,7 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
           {next && (
             <a
               href={hrefFor("bookings")}
-              className="mt-8 block rounded-2xl bg-[var(--hero)] p-4 transition-transform hover:-translate-y-0.5"
+              className="mt-10 block rounded-2xl bg-[var(--hero)] p-5 transition-transform hover:-translate-y-0.5"
             >
               <p className="text-[11px] font-semibold tracking-[0.12em] text-brand-700 uppercase">Prochaine réservation</p>
               <p className="mt-2 truncate font-semibold">{next.subject}</p>
@@ -118,19 +118,17 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
 
           <div className="mt-auto space-y-3">
             {config.demo && (
-              <div className="rounded-2xl border border-dashed border-line p-3.5 text-xs text-muted">
-                <p className="font-semibold text-brand-700">Mode démonstration</p>
-                <p className="mt-1">Données fictives, aucune invitation n'est envoyée.</p>
-                <button
-                  onClick={() => {
-                    resetDemo();
-                    window.location.reload();
-                  }}
-                  className="mt-2 inline-flex items-center gap-1 font-medium text-brand-700 hover:underline"
-                >
-                  <RotateCcw className="size-3" /> Réinitialiser
-                </button>
-              </div>
+              <button
+                onClick={() => {
+                  resetDemo();
+                  window.location.reload();
+                }}
+                className="flex w-full items-center gap-2 px-3 text-xs text-muted hover:text-brand-700"
+                title="Données fictives, aucune invitation n'est envoyée"
+              >
+                <span className="size-1.5 rounded-full bg-amber-500" /> Mode démo
+                <RotateCcw className="ml-auto size-3" />
+              </button>
             )}
             <div className="flex items-center gap-2 border-t border-line pt-4">
               <UserMenu onSignOut={embedded ? undefined : onSignOut} />
@@ -157,7 +155,7 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1200px] px-5 pt-4 pb-32 sm:px-8 lg:px-12 lg:pt-10 lg:pb-16">{children}</main>
+      <main className="mx-auto w-full max-w-[1180px] px-5 pt-6 pb-36 sm:px-10 lg:px-16 lg:pt-12 lg:pb-24">{children}</main>
 
       {/* Navigation mobile */}
       <nav
