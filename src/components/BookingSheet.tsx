@@ -21,6 +21,7 @@ import { GraphError } from "../services/graph";
 import { useBooking, type Selection } from "../store";
 import type { Booking, BookingStep, Person } from "../types";
 import { PeoplePicker } from "./PeoplePicker";
+import { ResourceArt } from "./ResourceArt";
 import { SuccessView } from "./SuccessView";
 import { Button } from "./ui/Button";
 import { Sheet, SheetClose } from "./ui/Sheet";
@@ -145,32 +146,31 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
 
   return (
     <div className="flex min-h-0 flex-1 flex-col" onKeyDown={onKeyDown}>
-      <div className="flex shrink-0 items-start justify-between gap-4 border-b border-zinc-200 px-5 py-4 dark:border-white/[0.08]">
-        <div className="min-w-0">
-          <p className="text-xs text-zinc-500">Réserver {KIND_LABEL[resource.kind].article}</p>
-          <h2 className="truncate text-lg font-semibold tracking-tight">{resource.name}</h2>
-          <p className="truncate text-[13px] text-zinc-500 dark:text-zinc-400">
-            {(resource.kind === "room"
-              ? [resource.building, resource.floor, resource.capacity && `${resource.capacity} pers.`]
-              : [resource.model, resource.plate, resource.location]
-            )
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
-        </div>
+      <div className="relative shrink-0 px-6 pt-6">
+        <ResourceArt resource={resource} className="aspect-[2/1] rounded-3xl" />
         <SheetClose
-          className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white"
+          className="absolute top-9 right-9 flex size-8 items-center justify-center rounded-full bg-[var(--bg)] text-muted shadow-sm transition-colors hover:text-zinc-950 dark:hover:text-white"
           aria-label="Fermer"
         >
           <X className="size-4" />
         </SheetClose>
+        <p className="mt-6 text-sm text-muted">Réserver {KIND_LABEL[resource.kind].article}</p>
+        <h2 className="truncate text-[28px] leading-tight font-semibold tracking-[-0.02em]">{resource.name}</h2>
+        <p className="mt-1 truncate text-sm text-muted">
+          {(resource.kind === "room"
+            ? [resource.building, resource.floor, resource.capacity && `${resource.capacity} pers.`]
+            : [resource.model, resource.plate, resource.location]
+          )
+            .filter(Boolean)
+            .join(" · ")}
+        </p>
       </div>
 
-      <div className="scrollbar-thin min-h-0 flex-1 space-y-6 overflow-y-auto px-5 py-5">
+      <div className="scrollbar-thin min-h-0 flex-1 space-y-8 overflow-y-auto px-6 py-6">
         {/* Créneau */}
-        <section className="rounded-lg border border-zinc-200 p-4 dark:border-white/[0.08]">
+        <section className="rounded-2xl bg-surface p-5">
           <div className="flex items-start gap-3">
-            <CalendarDays className="mt-0.5 size-4 shrink-0 text-zinc-500" />
+            <CalendarDays className="mt-0.5 size-4 shrink-0 text-muted" />
             <div className="min-w-0 flex-1">
               <p className="font-semibold">{fmtLongDate(start)}</p>
               <p className="text-sm text-zinc-600 tabular-nums dark:text-zinc-300">
@@ -242,7 +242,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
             )}
           </AnimatePresence>
 
-          <div className="mt-3 border-t border-zinc-200/80 pt-3 text-sm dark:border-white/10">
+          <div className="mt-3 border-t border-line pt-3 text-sm">
             {ruleErrors.length > 0 ? (
               <ul className="space-y-1">
                 {ruleErrors.map((e) => (
@@ -277,7 +277,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
             onChange={(e) => setSubject(e.target.value)}
             placeholder={finalSubject}
             maxLength={255}
-            className="h-12 w-full rounded-lg border border-zinc-200 bg-white px-4 text-[15px] transition-all outline-none placeholder:text-zinc-400 focus:border-brand-400 focus:ring-4 focus:ring-brand-500/15 dark:border-white/10 dark:bg-white/[0.04]"
+            className="h-12 w-full rounded-lg border border-line bg-transparent px-4 text-[15px] transition-all outline-none placeholder:text-zinc-400 focus:border-zinc-400"
           />
           <div className="mt-2 flex flex-wrap gap-1.5">
             {SUBJECTS[resource.kind].map((s) => (
@@ -289,7 +289,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
                   "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
                   subject === s
                     ? "border-brand-400 bg-brand-500/10 text-brand-700 dark:text-brand-200"
-                    : "border-zinc-200 text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/5",
+                    : "border-line text-zinc-600 hover:border-zinc-300 hover:bg-surface dark:text-zinc-300 dark:hover:bg-white/5",
                 )}
               >
                 {s}
@@ -334,15 +334,13 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
             onClick={() => setTeams((t) => !t)}
             className={cn(
               "flex w-full items-center gap-3.5 rounded-lg border p-4 text-left transition-all",
-              teams
-                ? "border-teams/40 bg-teams/[0.07] dark:bg-teams/15"
-                : "border-zinc-200 hover:bg-zinc-50 dark:border-white/10 dark:hover:bg-white/[0.03]",
+              teams ? "border-teams/40 bg-teams/[0.07] dark:bg-teams/15" : "border-line hover:bg-surface",
             )}
           >
             <TeamsLogo className={cn("size-7 shrink-0 transition-all", !teams && "opacity-50 grayscale")} />
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-semibold">Réunion Microsoft Teams</span>
-              <span className="block text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="block text-xs text-muted">
                 {teams
                   ? "Un lien « Rejoindre » sera ajouté à l'invitation"
                   : "Ajouter un lien de visioconférence pour les participants à distance"}
@@ -377,7 +375,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
                 onChange={(e) => setMessage(e.target.value)}
                 rows={3}
                 placeholder="Ordre du jour, documents à préparer…"
-                className="w-full resize-none rounded-lg border border-zinc-200 bg-white px-4 py-3 text-[15px] outline-none placeholder:text-zinc-400 focus:border-brand-400 focus:ring-4 focus:ring-brand-500/15 dark:border-white/10 dark:bg-white/[0.04]"
+                className="w-full resize-none rounded-lg border border-line bg-transparent px-4 py-3 text-[15px] outline-none placeholder:text-zinc-400 focus:border-zinc-400"
               />
             </>
           ) : (
@@ -393,11 +391,11 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
       </div>
 
       {/* Pied */}
-      <div className="shrink-0 border-t border-zinc-200/80 bg-white/90 px-5 py-4 backdrop-blur dark:border-white/10 dark:bg-[#121214]/90">
+      <div className="shrink-0 border-t border-line bg-[var(--bg)] px-6 py-5">
         {step ? (
           <BookingProgress step={step} hasAttendees={attendees.length > 0} kind={resource.kind} />
         ) : (
-          <p className="mb-3 text-center text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mb-3 text-center text-xs text-muted">
             {attendees.length > 0
               ? `${attendees.length} invitation${attendees.length > 1 ? "s" : ""} envoyée${attendees.length > 1 ? "s" : ""} dans Outlook · visible${attendees.length > 1 ? "s" : ""} dans le calendrier Teams`
               : "L'événement sera ajouté à votre calendrier Outlook et Teams"}
@@ -418,8 +416,8 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
               : `Réserver ${KIND_LABEL[resource.kind].article}`}
         </Button>
         <p className="mt-2 hidden text-center text-[11px] text-zinc-400 md:block">
-          <kbd className="rounded border border-zinc-200 px-1 font-sans dark:border-white/10">Ctrl</kbd> +{" "}
-          <kbd className="rounded border border-zinc-200 px-1 font-sans dark:border-white/10">Entrée</kbd> pour valider
+          <kbd className="rounded border border-line px-1 font-sans">Ctrl</kbd> +{" "}
+          <kbd className="rounded border border-line px-1 font-sans">Entrée</kbd> pour valider
         </p>
       </div>
     </div>
@@ -443,11 +441,7 @@ function BookingProgress({ step, hasAttendees, kind }: { step: BookingStep; hasA
           key={s.id}
           className={cn(
             "flex items-center gap-2",
-            i < current
-              ? "text-zinc-500"
-              : i === current
-                ? "font-medium text-zinc-900 dark:text-white"
-                : "text-zinc-400 dark:text-zinc-600",
+            i < current ? "text-muted" : i === current ? "font-medium text-zinc-900 dark:text-white" : "text-zinc-400 dark:text-zinc-600",
           )}
         >
           {i < current ? (
@@ -465,12 +459,12 @@ function BookingProgress({ step, hasAttendees, kind }: { step: BookingStep; hasA
 }
 
 const inputClass =
-  "h-11 w-full rounded-md border border-zinc-200 bg-white px-3 text-sm tabular-nums outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-500/15 dark:border-white/10 dark:bg-white/5 dark:[color-scheme:dark]";
+  "h-11 w-full rounded-md border border-line bg-transparent px-3 text-sm tabular-nums outline-none focus:border-zinc-400 dark:[color-scheme:dark]";
 
 function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
   return (
     <label className={cn("block", className)}>
-      <span className="mb-1 block text-[11px] font-semibold tracking-wide text-zinc-500 uppercase">{label}</span>
+      <span className="mb-1 block text-[11px] font-semibold tracking-wide text-muted uppercase">{label}</span>
       {children}
     </label>
   );

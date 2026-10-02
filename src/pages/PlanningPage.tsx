@@ -129,7 +129,7 @@ export function PlanningPage() {
       />
 
       <div className="card overflow-hidden">
-        <div className="flex flex-wrap items-center gap-2 border-b border-zinc-200/80 px-4 py-3 dark:border-white/10">
+        <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3">
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -155,8 +155,8 @@ export function PlanningPage() {
 
         <div className="flex">
           {/* Colonne des ressources */}
-          <div className="w-36 shrink-0 border-r border-zinc-200/80 sm:w-52 dark:border-white/10">
-            <div className="h-10 border-b border-zinc-200/80 dark:border-white/10" />
+          <div className="w-36 shrink-0 border-r border-line sm:w-52">
+            <div className="h-10 border-b border-line" />
             {isLoading &&
               Array.from({ length: 5 }, (_, i) => (
                 <div key={i} className="flex items-center px-4" style={{ height: ROW_HEIGHT }}>
@@ -166,14 +166,13 @@ export function PlanningPage() {
             {rows.map((r) => (
               <div
                 key={r.id}
-                className="flex flex-col justify-center border-b border-zinc-100 px-3 last:border-b-0 sm:px-4 dark:border-white/5"
+                className="flex flex-col justify-center border-b border-line px-3 last:border-b-0 sm:px-4 dark:border-white/5"
                 style={{ height: ROW_HEIGHT }}
               >
                 <p className="flex items-center gap-2 truncate text-sm font-semibold">
-                  <span className="size-2.5 shrink-0 rounded-full" style={{ background: `oklch(0.62 0.18 ${r.hue ?? 250})` }} />
                   <span className="truncate">{r.name}</span>
                 </p>
-                <p className="mt-0.5 flex items-center gap-1 truncate pl-[18px] text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted">
                   {r.capacity !== undefined && (
                     <>
                       <Users className="size-3" /> {r.capacity}
@@ -189,13 +188,9 @@ export function PlanningPage() {
           {/* Grille horaire */}
           <div ref={scroller} className="scrollbar-thin relative min-w-0 flex-1 overflow-x-auto">
             <div className="relative" style={{ width: gridWidth }}>
-              <div className="sticky top-0 z-10 flex h-10 border-b border-zinc-200/80 bg-white/60 backdrop-blur dark:border-white/10 dark:bg-transparent">
+              <div className="sticky top-0 z-10 flex h-10 border-b border-line bg-[var(--bg)] backdrop-blur dark:bg-transparent">
                 {Array.from({ length: hours }, (_, i) => (
-                  <div
-                    key={i}
-                    className="relative shrink-0 border-l border-zinc-200/70 first:border-l-0 dark:border-white/[0.06]"
-                    style={{ width: HOUR_WIDTH }}
-                  >
+                  <div key={i} className="relative shrink-0 border-l border-line first:border-l-0" style={{ width: HOUR_WIDTH }}>
                     <span className="absolute top-2.5 left-2 text-xs font-semibold text-zinc-400 tabular-nums">
                       {String(config.dayStartHour + i).padStart(2, "0")}:00
                     </span>
@@ -210,7 +205,7 @@ export function PlanningPage() {
                 return (
                   <div
                     key={r.id}
-                    className="relative touch-pan-x border-b border-zinc-100 last:border-b-0 dark:border-white/5"
+                    className="relative touch-pan-x border-b border-line last:border-b-0 dark:border-white/5"
                     style={{ height: ROW_HEIGHT }}
                     onPointerDown={onPointerDown(r)}
                     onPointerMove={onPointerMove(r)}
@@ -219,15 +214,8 @@ export function PlanningPage() {
                   >
                     {/* lignes horaires */}
                     {Array.from({ length: hours }, (_, i) => (
-                      <div
-                        key={i}
-                        className="absolute inset-y-0 border-l border-zinc-100 dark:border-white/[0.05]"
-                        style={{ left: i * HOUR_WIDTH }}
-                      >
-                        <div
-                          className="absolute inset-y-3 border-l border-dashed border-zinc-100 dark:border-white/[0.04]"
-                          style={{ left: HOUR_WIDTH / 2 }}
-                        />
+                      <div key={i} className="absolute inset-y-0 border-l border-line" style={{ left: i * HOUR_WIDTH }}>
+                        <div className="absolute inset-y-3 border-l border-dashed border-line" style={{ left: HOUR_WIDTH / 2 }} />
                       </div>
                     ))}
                     {isToday && nowX > 0 && (
@@ -258,7 +246,7 @@ export function PlanningPage() {
 
                     {dragging && (
                       <div
-                        className="bg-brand-600 pointer-events-none absolute inset-y-2 rounded-md px-2 py-1 text-[11px] font-semibold text-white"
+                        className="bg-brand-600 pointer-events-none absolute inset-y-2 rounded-md px-2 py-1 text-[11px] font-semibold text-accent-fg"
                         style={{
                           left: Math.min(dragging.anchor, dragging.current) * Q_WIDTH,
                           width: (Math.abs(dragging.current - dragging.anchor) + 1) * Q_WIDTH,
@@ -282,7 +270,7 @@ export function PlanningPage() {
         </div>
 
         {!isLoading && rows.length === 0 && (
-          <p className="px-6 py-12 text-center text-sm text-zinc-500">
+          <p className="px-6 py-12 text-center text-sm text-muted">
             Aucun{kind === "room" ? "e" : ""} {KIND_LABEL[kind].one} à afficher.
           </p>
         )}
@@ -302,10 +290,10 @@ function BusyBlock({ slot, mine, x, w, max }: { slot: BusySlot; mine?: boolean; 
       className={cn(
         "absolute inset-y-2 cursor-not-allowed overflow-hidden rounded-md border px-2 py-1 text-[11px] leading-tight",
         mine
-          ? "bg-brand-600 border-transparent text-white"
+          ? "bg-brand-600 border-transparent text-accent-fg"
           : slot.status === "tentative"
             ? "border-amber-300/70 bg-amber-100/80 text-amber-900 dark:border-amber-400/30 dark:bg-amber-400/15 dark:text-amber-100"
-            : "border-zinc-200 bg-zinc-100 text-zinc-600 dark:border-white/10 dark:bg-white/[0.07] dark:text-zinc-300",
+            : "border-line bg-surface-2 text-zinc-600 dark:text-zinc-300",
       )}
       style={{ left: left + 1, width: width - 2 }}
     >
@@ -319,9 +307,9 @@ function BusyBlock({ slot, mine, x, w, max }: { slot: BusySlot; mine?: boolean; 
 
 function Legend() {
   return (
-    <div className="ml-auto hidden items-center gap-4 text-xs text-zinc-500 md:flex dark:text-zinc-400">
+    <div className="ml-auto hidden items-center gap-4 text-xs text-muted md:flex dark:text-zinc-400">
       <span className="flex items-center gap-1.5">
-        <span className="size-3 rounded border border-zinc-200 bg-zinc-100 dark:border-white/10 dark:bg-white/10" /> Réservé
+        <span className="size-3 rounded border border-line bg-surface-2" /> Réservé
       </span>
       <span className="flex items-center gap-1.5">
         <span className="size-3 rounded border border-amber-300 bg-amber-100" /> Provisoire

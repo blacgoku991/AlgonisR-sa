@@ -13,12 +13,12 @@ import { dayKey, fmtLongDate, fmtTime, format, frLocale, isSameDay, parseDayKey,
 import type { KeyLog, VehicleBooking } from "../types";
 
 const STATUS: Record<KeyStatus, { label: string; dot: string; text: string }> = {
-  upcoming: { label: "À venir", dot: "bg-zinc-400", text: "text-zinc-500" },
+  upcoming: { label: "À venir", dot: "bg-zinc-400", text: "text-muted" },
   toHand: { label: "À remettre", dot: "bg-brand-500", text: "text-brand-600 dark:text-brand-400" },
   out: { label: "Clés sorties", dot: "bg-amber-500", text: "text-amber-700 dark:text-amber-400" },
   overdue: { label: "Retour en retard", dot: "bg-rose-500", text: "text-rose-600 dark:text-rose-400" },
   returned: { label: "Rendues", dot: "bg-emerald-500", text: "text-emerald-700 dark:text-emerald-400" },
-  missed: { label: "Non retirées", dot: "bg-zinc-400", text: "text-zinc-500" },
+  missed: { label: "Non retirées", dot: "bg-zinc-400", text: "text-muted" },
 };
 
 type Action = { booking: VehicleBooking; kind: "hand" | "return" };
@@ -51,7 +51,7 @@ export function ReceptionPage() {
       <div className="card mx-auto mt-10 flex max-w-md flex-col items-center px-6 py-12 text-center">
         <Lock className="size-6 text-zinc-400" strokeWidth={1.5} />
         <h1 className="mt-3 font-medium">Accès réservé à l'accueil</h1>
-        <p className="mt-1 text-sm text-zinc-500">Cet espace est réservé aux personnes chargées de la remise des clés des véhicules.</p>
+        <p className="mt-1 text-sm text-muted">Cet espace est réservé aux personnes chargées de la remise des clés des véhicules.</p>
       </div>
     );
   }
@@ -63,14 +63,11 @@ export function ReceptionPage() {
         subtitle="Remise et retour des clés. Mis à jour automatiquement toutes les 30 secondes."
         actions={
           <>
-            <div className="flex items-center rounded-md border border-zinc-200 dark:border-white/10">
+            <div className="flex items-center rounded-md border border-line">
               <IconBtn label="Jour précédent" onClick={() => setDay(dayKey(addDays(date, -1)))}>
                 <ChevronLeft className="size-4" />
               </IconBtn>
-              <button
-                onClick={() => setDay(dayKey(new Date()))}
-                className="h-8 border-x border-zinc-200 px-3 text-[13px] capitalize dark:border-white/10"
-              >
+              <button onClick={() => setDay(dayKey(new Date()))} className="h-8 border-x border-line px-3 text-[13px] capitalize">
                 {isToday ? "Aujourd'hui" : format(date, "EEE d MMM", { locale: frLocale })}
               </button>
               <IconBtn label="Jour suivant" onClick={() => setDay(dayKey(addDays(date, 1)))}>
@@ -89,7 +86,7 @@ export function ReceptionPage() {
         }
       />
 
-      <div className="mb-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-zinc-200 bg-zinc-200 sm:grid-cols-4 dark:border-white/[0.08] dark:bg-white/[0.08]">
+      <div className="mb-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-[var(--line)] sm:grid-cols-4">
         <Stat label="À remettre" value={groups.toHand.length} />
         <Stat label="Clés sorties" value={groups.out.length} />
         <Stat label="Retours en retard" value={groups.overdue.length} alert={groups.overdue.length > 0} />
@@ -97,7 +94,7 @@ export function ReceptionPage() {
       </div>
 
       {error ? (
-        <div className="card px-6 py-10 text-center text-sm text-zinc-500">{error instanceof Error ? error.message : String(error)}</div>
+        <div className="card px-6 py-10 text-center text-sm text-muted">{error instanceof Error ? error.message : String(error)}</div>
       ) : isLoading ? (
         <div className="card space-y-3 p-5">
           {Array.from({ length: 4 }, (_, i) => (
@@ -140,8 +137,8 @@ export function ReceptionPage() {
 
 function Stat({ label, value, alert }: { label: string; value: number; alert?: boolean }) {
   return (
-    <div className="bg-white px-4 py-3 dark:bg-[#131315]">
-      <p className="text-xs text-zinc-500">{label}</p>
+    <div className="bg-[var(--bg)] px-5 py-4">
+      <p className="text-xs text-muted">{label}</p>
       <p className={cn("mt-0.5 text-2xl font-semibold tabular-nums", alert && "text-rose-600 dark:text-rose-400")}>{value}</p>
     </div>
   );
@@ -163,14 +160,12 @@ function Group({
     <section>
       <div className="mb-2 flex items-baseline gap-2">
         <h2 className="text-sm font-medium">{title}</h2>
-        {hint && <p className="text-xs text-zinc-500">{hint}</p>}
+        {hint && <p className="text-xs text-muted">{hint}</p>}
       </div>
       {count === 0 ? (
-        <p className="rounded-lg border border-dashed border-zinc-200 px-4 py-5 text-center text-sm text-zinc-500 dark:border-white/10">
-          {empty}
-        </p>
+        <p className="rounded-lg border border-dashed border-line px-4 py-5 text-center text-sm text-muted">{empty}</p>
       ) : (
-        <div className="card divide-y divide-zinc-200 overflow-hidden dark:divide-white/[0.06]">{children}</div>
+        <div className="card divide-y divide-[var(--line)] overflow-hidden dark:divide-white/[0.06]">{children}</div>
       )}
     </section>
   );
@@ -194,14 +189,14 @@ function Row({ booking: b, status, onAction }: { booking: VehicleBooking; status
         <p className="font-medium">
           {fmtTime(b.start)} – {sameDay ? fmtTime(b.end) : format(b.end, "dd/MM HH:mm")}
         </p>
-        {!sameDay && <p className="text-xs text-zinc-500">depuis le {format(b.start, "dd/MM")}</p>}
+        {!sameDay && <p className="text-xs text-muted">depuis le {format(b.start, "dd/MM")}</p>}
       </div>
 
       <div className="min-w-0">
         <p className="truncate text-sm font-medium">
-          {b.vehicle.name} <span className="font-normal text-zinc-500">· {b.vehicle.plate}</span>
+          {b.vehicle.name} <span className="font-normal text-muted">· {b.vehicle.plate}</span>
         </p>
-        <p className="truncate text-xs text-zinc-500">{[b.vehicle.location, b.subject].filter(Boolean).join(" · ")}</p>
+        <p className="truncate text-xs text-muted">{[b.vehicle.location, b.subject].filter(Boolean).join(" · ")}</p>
       </div>
 
       <div className="flex min-w-0 items-center gap-2.5">
@@ -227,7 +222,7 @@ function Row({ booking: b, status, onAction }: { booking: VehicleBooking; status
             </a>
           </>
         ) : (
-          <span className="text-sm text-zinc-500">—</span>
+          <span className="text-sm text-muted">—</span>
         )}
       </div>
 
@@ -238,7 +233,7 @@ function Row({ booking: b, status, onAction }: { booking: VehicleBooking; status
             {s.label}
           </p>
           {log.handedAt && (
-            <p className="text-[11px] text-zinc-500 tabular-nums">
+            <p className="text-[11px] text-muted tabular-nums">
               {log.returnedAt
                 ? `Rendues ${fmtTime(new Date(log.returnedAt))}${log.endKm && log.startKm ? ` · ${log.endKm - log.startKm} km` : ""}`
                 : `Remises ${fmtTime(new Date(log.handedAt))}${log.handedBy ? ` · ${log.handedBy.split(" ")[0]}` : ""}`}
@@ -305,34 +300,32 @@ function KeyDialog({ action, onClose }: { action: Action | null; onClose: () => 
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50" />
         <Dialog.Content
           aria-describedby={undefined}
-          className="data-[state=open]:animate-pop fixed top-1/2 left-1/2 z-50 w-[min(420px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-zinc-200 bg-white p-5 shadow-2xl dark:border-white/10 dark:bg-[#161618]"
+          className="data-[state=open]:animate-pop fixed top-1/2 left-1/2 z-50 w-[min(420px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-line bg-[var(--bg)] p-5 shadow-2xl"
         >
           {b && (
             <>
               <Dialog.Title className="font-semibold">{hand ? "Remise des clés" : "Retour des clés"}</Dialog.Title>
-              <div className="mt-3 rounded-lg border border-zinc-200 px-3.5 py-3 text-sm dark:border-white/10">
+              <div className="mt-3 rounded-lg border border-line px-3.5 py-3 text-sm">
                 <p className="font-medium">
                   {b.vehicle.name} · {b.vehicle.plate}
                 </p>
-                <p className="text-zinc-500">
+                <p className="text-muted">
                   {b.organizer?.name} · {fmtTime(b.start)} – {fmtTime(b.end)}
                 </p>
                 {!hand && b.keyLog.startKm !== undefined && (
-                  <p className="mt-1 text-xs text-zinc-500 tabular-nums">Kilométrage au départ : {b.keyLog.startKm} km</p>
+                  <p className="mt-1 text-xs text-muted tabular-nums">Kilométrage au départ : {b.keyLog.startKm} km</p>
                 )}
               </div>
               <label className="mt-4 block">
-                <span className="mb-1 block text-xs text-zinc-500">Kilométrage {hand ? "au départ" : "au retour"} (facultatif)</span>
+                <span className="mb-1 block text-xs text-muted">Kilométrage {hand ? "au départ" : "au retour"} (facultatif)</span>
                 <input
                   inputMode="numeric"
                   value={km}
                   onChange={(e) => setKm(e.target.value.replace(/[^\d]/g, ""))}
                   placeholder="ex. 12 480"
                   className={cn(
-                    "h-9 w-full rounded-md border bg-white px-3 text-sm tabular-nums outline-none focus:ring-2 dark:bg-zinc-900",
-                    invalidKm
-                      ? "border-rose-500 focus:ring-rose-500/20"
-                      : "border-zinc-200 focus:border-brand-500 focus:ring-brand-500/20 dark:border-white/10",
+                    "h-9 w-full rounded-md border bg-transparent px-3 text-sm tabular-nums outline-none focus:ring-2 dark:bg-zinc-900",
+                    invalidKm ? "border-rose-500 focus:ring-rose-500/20" : "border-line focus:border-brand-500 focus:ring-brand-500/20",
                   )}
                 />
                 {invalidKm && (
@@ -340,14 +333,14 @@ function KeyDialog({ action, onClose }: { action: Action | null; onClose: () => 
                 )}
               </label>
               <label className="mt-3 block">
-                <span className="mb-1 block text-xs text-zinc-500">
+                <span className="mb-1 block text-xs text-muted">
                   {hand ? "Remarque" : "État du véhicule, carburant, remarque"} (facultatif)
                 </span>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value.slice(0, 300))}
                   rows={2}
-                  className="w-full resize-none rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-white/10 dark:bg-zinc-900"
+                  className="w-full resize-none rounded-md border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-zinc-400 dark:bg-zinc-900"
                 />
               </label>
               <div className="mt-5 flex justify-end gap-2">
@@ -373,7 +366,7 @@ function IconBtn({ label, onClick, children }: { label: string; onClick: () => v
     <button
       onClick={onClick}
       aria-label={label}
-      className="flex size-8 items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+      className="flex size-8 items-center justify-center text-muted hover:text-zinc-900 dark:hover:text-white"
     >
       {children}
     </button>

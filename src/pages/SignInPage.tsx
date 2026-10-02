@@ -7,10 +7,10 @@ export function SignInPage({ onSignIn, error }: { onSignIn: () => Promise<void>;
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <Logo className="size-10" />
-        <h1 className="mt-6 text-2xl font-semibold tracking-tight">{config.appName}</h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Réservation des salles et véhicules · {config.companyName}</p>
+      <div className="w-full max-w-sm text-center">
+        <Logo className="mx-auto size-12" />
+        <h1 className="mt-8 text-4xl font-semibold tracking-[-0.03em]">{config.appName}</h1>
+        <p className="mt-2 text-[15px] text-muted">Réservation des salles et véhicules · {config.companyName}</p>
 
         <button
           onClick={async () => {
@@ -22,7 +22,7 @@ export function SignInPage({ onSignIn, error }: { onSignIn: () => Promise<void>;
             }
           }}
           disabled={loading}
-          className="mt-8 flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-zinc-300 bg-white text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 disabled:opacity-60 dark:border-white/15 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+          className="mt-10 flex h-12 w-full items-center justify-center gap-3 rounded-full bg-zinc-950 text-[15px] font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-60 dark:bg-white dark:text-zinc-950"
         >
           <MicrosoftLogo />
           {loading ? "Connexion…" : "Se connecter avec Microsoft 365"}
@@ -34,7 +34,7 @@ export function SignInPage({ onSignIn, error }: { onSignIn: () => Promise<void>;
           </p>
         )}
 
-        <p className="mt-6 text-xs leading-relaxed text-zinc-500">
+        <p className="mt-6 text-xs leading-relaxed text-muted">
           Utilisez votre compte professionnel. Les réservations sont enregistrées dans votre calendrier Outlook et visibles dans Teams.
         </p>
       </div>

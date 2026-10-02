@@ -1,13 +1,13 @@
-/** Monogramme de l'application. */
+/** Monogramme monochrome (s'inverse avec le thème). */
 export function Logo({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
-      <rect width="64" height="64" rx="14" fill="#2f6fde" />
+      <rect width="64" height="64" rx="16" className="fill-zinc-950 dark:fill-white" />
       <path
-        d="M19 44V20h14a8 8 0 0 1 0 16H19m14 0 10 8"
+        d="M22 44V20h12a8 8 0 0 1 0 16H22m12 0 9 8"
         fill="none"
-        stroke="#fff"
-        strokeWidth="5.5"
+        className="stroke-white dark:stroke-zinc-950"
+        strokeWidth="5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

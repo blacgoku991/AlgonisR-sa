@@ -12,11 +12,7 @@ export function KindToggle({
   className?: string;
 }) {
   return (
-    <div
-      className={cn("grid grid-cols-2 rounded-md bg-zinc-100 p-0.5 dark:bg-white/[0.05]", className)}
-      role="tablist"
-      aria-label="Type de ressource"
-    >
+    <div className={cn("inline-flex rounded-full bg-surface p-1", className)} role="tablist" aria-label="Type de ressource">
       {(["room", "vehicle"] as const).map((k) => (
         <button
           key={k}
@@ -24,10 +20,10 @@ export function KindToggle({
           aria-selected={value === k}
           onClick={() => onChange(k)}
           className={cn(
-            "h-8 rounded-[5px] px-4 text-[13px] font-medium transition-colors",
+            "h-9 rounded-full px-5 text-sm font-medium transition-all",
             value === k
-              ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-white"
-              : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100",
+              ? "bg-[var(--bg)] text-zinc-950 shadow-sm dark:bg-zinc-800 dark:text-white"
+              : "text-muted hover:text-zinc-950 dark:hover:text-white",
           )}
         >
           {k === "room" ? "Salles" : "Véhicules"}

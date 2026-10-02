@@ -44,9 +44,9 @@ export function Sheet({ open, onOpenChange, title, description, children, classN
             <Dialog.Content asChild forceMount {...(description ? {} : { "aria-describedby": undefined })}>
               <motion.div
                 className={cn(
-                  "fixed z-50 flex flex-col overflow-hidden bg-white shadow-2xl outline-none dark:bg-[#111113]",
+                  "fixed z-50 flex flex-col overflow-hidden bg-[var(--bg)] shadow-2xl outline-none",
                   desktop
-                    ? "top-0 right-0 bottom-0 w-[min(520px,100vw)] border-l border-zinc-200 dark:border-white/[0.08]"
+                    ? "top-0 right-0 bottom-0 w-[min(520px,100vw)] border-l border-line"
                     : "inset-x-0 bottom-0 max-h-[94dvh] rounded-t-xl",
                   className,
                 )}

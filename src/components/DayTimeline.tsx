@@ -27,7 +27,7 @@ export function DayTimeline({ day, busy, selection, className }: DayTimelineProp
 
   return (
     <div className={cn("select-none", className)}>
-      <div className="relative h-3 overflow-hidden rounded-full bg-emerald-500/15 dark:bg-emerald-400/10">
+      <div className="relative h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/[0.08]">
         {showNow && <div className="hatched absolute inset-y-0 left-0" style={{ width: `${pct(now)}%` }} />}
         {busy?.filter(isBlocking).map((slot, i) => (
           <div
@@ -35,7 +35,7 @@ export function DayTimeline({ day, busy, selection, className }: DayTimelineProp
             title={`${fmtTime(slot.start)} – ${fmtTime(slot.end)}${slot.subject ? ` · ${slot.subject}` : ""}`}
             className={cn(
               "absolute inset-y-0 rounded-[3px]",
-              slot.status === "tentative" ? "bg-amber-400/70" : "bg-zinc-400/70 dark:bg-zinc-500/80",
+              slot.status === "tentative" ? "bg-zinc-400/60" : "bg-zinc-400 dark:bg-zinc-500",
               slot.optimistic && "bg-brand-500",
             )}
             style={{ left: `${pct(slot.start)}%`, width: `${Math.max(0.8, pct(slot.end) - pct(slot.start))}%` }}
@@ -43,16 +43,12 @@ export function DayTimeline({ day, busy, selection, className }: DayTimelineProp
         ))}
         {selection && (
           <div
-            className={cn(
-              "absolute -inset-y-0 rounded-[4px] ring-2 ring-inset",
-              selection.ok ? "bg-brand-500/35 ring-brand-500" : "bg-rose-500/30 ring-rose-500",
-            )}
+            className={cn("absolute inset-y-0 rounded-full", selection.ok ? "bg-zinc-950 dark:bg-white" : "bg-rose-500")}
             style={{ left: `${pct(selection.start)}%`, width: `${Math.max(1.2, pct(selection.end) - pct(selection.start))}%` }}
           />
         )}
-        {showNow && <div className="absolute inset-y-0 w-0.5 bg-rose-500" style={{ left: `${pct(now)}%` }} />}
       </div>
-      <div className="relative mt-1 h-3 text-[10px] font-medium text-zinc-400 tabular-nums dark:text-zinc-500">
+      <div className="relative mt-1.5 h-3 text-[10px] text-zinc-400 tabular-nums dark:text-muted">
         {labels.map((h) => (
           <span
             key={h}

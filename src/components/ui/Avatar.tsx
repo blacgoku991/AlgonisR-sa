@@ -4,14 +4,12 @@ import { cn } from "../../lib/cn";
 import type { PersonStatus } from "../../lib/availability";
 
 const GRADIENTS = [
-  "from-indigo-500 to-violet-500",
-  "from-sky-500 to-indigo-500",
-  "from-emerald-500 to-teal-500",
-  "from-amber-500 to-orange-500",
-  "from-rose-500 to-pink-500",
-  "from-fuchsia-500 to-purple-500",
-  "from-cyan-500 to-blue-500",
-  "from-lime-500 to-emerald-500",
+  "from-zinc-500 to-zinc-700",
+  "from-zinc-600 to-zinc-800",
+  "from-neutral-500 to-neutral-700",
+  "from-stone-500 to-stone-700",
+  "from-zinc-400 to-zinc-600",
+  "from-neutral-600 to-neutral-800",
 ];
 
 export function initials(name: string): string {

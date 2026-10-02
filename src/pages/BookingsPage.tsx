@@ -65,9 +65,9 @@ export function BookingsPage() {
           {groups.map(([key, list]) => (
             <section key={key}>
               <h2 className="mb-2 text-sm font-medium">
-                {fmtRelativeDay(parseDayKey(key))} <span className="font-normal text-zinc-500">· {list.length}</span>
+                {fmtRelativeDay(parseDayKey(key))} <span className="font-normal text-muted">· {list.length}</span>
               </h2>
-              <div className="card divide-y divide-zinc-200 overflow-hidden dark:divide-white/[0.06]">
+              <div className="card divide-y divide-[var(--line)] overflow-hidden dark:divide-white/[0.06]">
                 <AnimatePresence initial={false}>
                   {list.map((b) => (
                     <BookingRow key={b.id} booking={b} onCancel={() => setCancelling(b)} />
@@ -115,14 +115,14 @@ function BookingRow({ booking, onCancel }: { booking: Booking; onCancel: () => v
         <p className="text-sm font-medium">
           {fmtTime(booking.start)} – {fmtTime(booking.end)}
         </p>
-        <p className={cn("text-xs", live ? "font-medium text-emerald-600 dark:text-emerald-400" : "text-zinc-500")}>
+        <p className={cn("text-xs", live ? "font-medium text-emerald-600 dark:text-emerald-400" : "text-muted")}>
           {countdown ?? fmtDuration(minutes)}
         </p>
       </div>
 
       <div className="min-w-0">
         <h3 className="truncate text-sm font-medium">{booking.subject}</h3>
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500">
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
           <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
             <Icon className="size-3.5" strokeWidth={1.75} /> {booking.resourceName}
           </span>
@@ -143,7 +143,7 @@ function BookingRow({ booking, onCancel }: { booking: Booking; onCancel: () => v
           )}
         </div>
         {vehicle && (
-          <p className="mt-1.5 flex items-center gap-1.5 text-xs text-zinc-500">
+          <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted">
             <KeyRound className="size-3.5" /> Clés à retirer à l'accueil
             {booking.resource?.location ? ` · véhicule : ${booking.resource.location}` : ""}
           </p>
@@ -166,12 +166,12 @@ function BookingRow({ booking, onCancel }: { booking: Booking; onCancel: () => v
             href={booking.webLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-zinc-200 px-3 text-[13px] font-medium transition hover:bg-zinc-50 dark:border-white/10 dark:hover:bg-white/[0.05]"
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-line px-3 text-[13px] font-medium transition hover:bg-surface"
           >
             <ExternalLink className="size-3.5" /> Outlook
           </a>
         )}
-        <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400" onClick={onCancel}>
+        <Button variant="ghost" size="sm" className="text-muted hover:text-rose-600 dark:hover:text-rose-400" onClick={onCancel}>
           Annuler
         </Button>
       </div>
@@ -203,12 +203,12 @@ function CancelDialog({ booking, onClose }: { booking: Booking | null; onClose: 
     <AlertDialog.Root open={Boolean(booking)} onOpenChange={(o) => !o && onClose()}>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="fixed inset-0 z-50 bg-zinc-950/40 backdrop-blur-sm" />
-        <AlertDialog.Content className="data-[state=open]:animate-pop fixed top-1/2 left-1/2 z-50 w-[min(440px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-white/10 dark:bg-[#161618]">
+        <AlertDialog.Content className="data-[state=open]:animate-pop fixed top-1/2 left-1/2 z-50 w-[min(440px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-line bg-[var(--bg)] p-6 shadow-2xl">
           <span className="flex size-12 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600">
             <Trash className="size-6" />
           </span>
           <AlertDialog.Title className="mt-4 text-lg font-semibold">Annuler cette réservation ?</AlertDialog.Title>
-          <AlertDialog.Description className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          <AlertDialog.Description className="mt-1 text-sm text-muted">
             « {booking?.subject} » — {booking && fmtRelativeDay(booking.start).toLowerCase()} à {booking && fmtTime(booking.start)}.{" "}
             {booking &&
               `${booking.resourceName} sera libéré${booking.resource?.kind === "room" ? "e" : ""}${booking.attendees.length ? " et les participants seront prévenus" : ""}.`}
@@ -218,7 +218,7 @@ function CancelDialog({ booking, onClose }: { booking: Booking | null; onClose: 
             onChange={(e) => setComment(e.target.value)}
             rows={2}
             placeholder="Message facultatif (ex. réunion reportée à jeudi)"
-            className="mt-4 w-full resize-none rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-500/15 dark:border-white/10 dark:bg-white/5"
+            className="mt-4 w-full resize-none rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-sm outline-none focus:border-zinc-400"
           />
           <div className="mt-5 flex justify-end gap-2">
             <AlertDialog.Cancel asChild>
@@ -239,7 +239,7 @@ function Empty() {
     <div className="card flex flex-col items-center px-6 py-14 text-center">
       <CalendarPlus className="size-6 text-zinc-400" strokeWidth={1.5} />
       <h3 className="mt-3 font-medium">Aucune réservation à venir</h3>
-      <p className="mt-1 max-w-sm text-sm text-zinc-500">Vos réservations de salles et de véhicules apparaîtront ici.</p>
+      <p className="mt-1 max-w-sm text-sm text-muted">Vos réservations de salles et de véhicules apparaîtront ici.</p>
       <Button className="mt-5" size="sm" icon={<CalendarPlus />} onClick={() => navigate("book")}>
         Nouvelle réservation
       </Button>
