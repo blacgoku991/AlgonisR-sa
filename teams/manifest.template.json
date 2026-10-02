@@ -1,0 +1,43 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.19/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.19",
+  "version": "{{VERSION}}",
+  "id": "{{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "{{COMPANY_NAME}}",
+    "websiteUrl": "{{APP_PUBLIC_URL}}",
+    "privacyUrl": "{{APP_PUBLIC_URL}}",
+    "termsOfUseUrl": "{{APP_PUBLIC_URL}}"
+  },
+  "name": {
+    "short": "{{APP_NAME}}",
+    "full": "{{APP_NAME}} — Réservation de salles et véhicules"
+  },
+  "description": {
+    "short": "Réservez une salle ou un véhicule et invitez vos collègues.",
+    "full": "{{APP_NAME}} affiche en temps réel les salles de réunion et les véhicules disponibles dans l'entreprise. Choisissez un créneau, réservez en un clic et invitez les participants : l'invitation arrive dans Outlook, avec un lien de réunion Teams, et apparaît dans le calendrier Teams."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#6366F1",
+  "staticTabs": [
+    {
+      "entityId": "reserver",
+      "name": "Réserver",
+      "contentUrl": "{{APP_PUBLIC_URL}}/?embed=1#/",
+      "websiteUrl": "{{APP_PUBLIC_URL}}/#/",
+      "scopes": ["personal"]
+    },
+    {
+      "entityId": "about",
+      "scopes": ["personal"]
+    }
+  ],
+  "permissions": ["identity"],
+  "validDomains": ["{{APP_HOST}}"],
+  "webApplicationInfo": {
+    "id": "{{AZURE_CLIENT_ID}}"
+  }
+}

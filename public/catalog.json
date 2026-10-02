@@ -1,0 +1,38 @@
+{
+  "$comment": "Catalogue Réza. Les salles sont découvertes automatiquement dans Exchange (Places API) ; utilisez rooms.items pour les compléter ou en ajouter, rooms.hide pour en masquer. Les véhicules sont des boîtes aux lettres « équipement » Exchange à déclarer dans vehicles. Fonctionnalités possibles : screen, video, whiteboard, phone, accessible, electric, hybrid, automatic, utility, gps.",
+  "rooms": {
+    "source": "both",
+    "hide": [],
+    "items": [
+      {
+        "email": "salle.everest@contoso.com",
+        "description": "Salle du conseil, vue panoramique",
+        "features": ["screen", "video", "phone", "accessible"]
+      }
+    ]
+  },
+  "vehicles": [
+    {
+      "email": "vehicule.megane@contoso.com",
+      "name": "Renault Mégane E-Tech",
+      "model": "Berline électrique",
+      "plate": "GH-482-KT",
+      "capacity": 5,
+      "energy": "Électrique",
+      "rangeKm": 450,
+      "features": ["electric", "automatic", "gps"],
+      "location": "Parking -1 · Place 12"
+    },
+    {
+      "email": "vehicule.kangoo@contoso.com",
+      "name": "Renault Kangoo Van",
+      "model": "Utilitaire 3 m³",
+      "plate": "EZ-604-RM",
+      "capacity": 2,
+      "energy": "Diesel",
+      "rangeKm": 800,
+      "features": ["utility", "gps"],
+      "location": "Cour de livraison"
+    }
+  ]
+}

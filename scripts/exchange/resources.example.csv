@@ -1,0 +1,7 @@
+﻿Type,Alias,Name,Capacity,Building,Floor,Features,Model,Plate,Location
+Salle,salle.everest,Salle Everest,14,Siège,5,screen;video;phone;accessible,,,
+Salle,salle.montblanc,Salle Mont-Blanc,8,Siège,4,screen;video;whiteboard,,,
+Salle,salle.cervin,Salle Cervin,4,Siège,3,screen;video,,,
+Salle,salle.annapurna,Salle Annapurna,20,Campus Nord,0,screen;video;phone;whiteboard;accessible,,,
+Vehicule,vehicule.megane,Renault Mégane E-Tech,5,,,electric;automatic;gps,Berline électrique,GH-482-KT,Parking -1 · Place 12
+Vehicule,vehicule.kangoo,Renault Kangoo Van,2,,,utility;gps,Utilitaire 3 m³,EZ-604-RM,Cour de livraison
