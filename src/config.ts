@@ -34,6 +34,20 @@ export const config = {
   dayStartHour: intEnv(env.VITE_DAY_START_HOUR, 7),
   dayEndHour: intEnv(env.VITE_DAY_END_HOUR, 20),
   catalogUrl: "/catalog.json",
+  /** Accès « Accueil » : ID du groupe Entra ID et/ou liste d'adresses e-mail (séparées par des virgules). */
+  receptionGroupId: (env.VITE_RECEPTION_GROUP_ID ?? "").trim(),
+  receptionEmails: (env.VITE_RECEPTION_EMAILS ?? "")
+    .split(/[,;\s]+/)
+    .map((e: string) => e.trim().toLowerCase())
+    .filter(Boolean),
 } as const;
 
-export const graphScopes = ["User.Read", "User.ReadBasic.All", "People.Read", "Calendars.ReadWrite", "Place.Read.All"];
+export const graphScopes = [
+  "User.Read",
+  "User.ReadBasic.All",
+  "People.Read",
+  "Calendars.ReadWrite",
+  // Accueil : lecture et annotation des calendriers des véhicules (droits accordés par Exchange au seul groupe Accueil).
+  "Calendars.ReadWrite.Shared",
+  "Place.Read.All",
+];

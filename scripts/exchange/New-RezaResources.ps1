@@ -28,13 +28,17 @@
     Domaine e-mail de l'entreprise (ex. contoso.com).
 .PARAMETER ShowSubjects
     Conserve l'objet des réunions dans le calendrier des ressources (sinon seul l'organisateur est visible).
+.PARAMETER ReceptionGroup
+    Groupe (adresse e-mail d'un groupe de sécurité à extension messagerie) chargé de l'accueil :
+    il reçoit le droit « Éditeur » sur le calendrier des véhicules pour suivre la remise et le retour des clés.
+    Les autres collaborateurs ne voient que les créneaux (droit « LimitedDetails »).
 .PARAMETER CatalogOut
     Écrit un fichier catalog.json prêt à copier dans public/ (véhicules + compléments des salles).
 
 .EXAMPLE
     Install-Module ExchangeOnlineManagement -Scope CurrentUser
     Connect-ExchangeOnline -UserPrincipalName admin@contoso.com
-    .\New-RezaResources.ps1 -CsvPath .\resources.csv -Domain contoso.com -CatalogOut ..\..\public\catalog.json
+    .\New-RezaResources.ps1 -CsvPath .\resources.csv -Domain contoso.com -ReceptionGroup accueil@contoso.com -CatalogOut ..\..\public\catalog.json
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
@@ -43,6 +47,7 @@ param(
     [int] $BookingWindowInDays = 180,
     [switch] $ShowSubjects,
     [switch] $SkipRoomLists,
+    [string] $ReceptionGroup,
     [string] $CatalogOut
 )
 
@@ -112,6 +117,18 @@ foreach ($row in $rows) {
         $folder = Get-MailboxFolderStatistics -Identity $email -FolderScope Calendar | Where-Object { $_.FolderType -eq "Calendar" } | Select-Object -First 1
         Set-MailboxFolderPermission -Identity "$($email):\$($folder.Name)" -User Default -AccessRights LimitedDetails | Out-Null
         Write-Host "  ✔ Créneaux visibles par les collaborateurs (LimitedDetails)" -ForegroundColor Green
+    }
+
+    # 3 bis. Accueil : droit « Éditeur » sur le calendrier des véhicules (suivi des clés)
+    if (-not $isRoom -and $ReceptionGroup) {
+        Invoke-WithRetry -What "Droits de l'accueil" -Action {
+            $folder = Get-MailboxFolderStatistics -Identity $email -FolderScope Calendar | Where-Object { $_.FolderType -eq "Calendar" } | Select-Object -First 1
+            $identity = "$($email):\$($folder.Name)"
+            $existing = Get-MailboxFolderPermission -Identity $identity -User $ReceptionGroup -ErrorAction SilentlyContinue
+            if ($existing) { Set-MailboxFolderPermission -Identity $identity -User $ReceptionGroup -AccessRights Editor | Out-Null }
+            else { Add-MailboxFolderPermission -Identity $identity -User $ReceptionGroup -AccessRights Editor | Out-Null }
+            Write-Host "  ✔ Accueil ($ReceptionGroup) : droit Éditeur sur le calendrier" -ForegroundColor Green
+        }
     }
 
     if ($isRoom) {

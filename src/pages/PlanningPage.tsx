@@ -1,9 +1,10 @@
 import { addMinutes } from "date-fns";
-import { ChevronLeft, ChevronRight, MousePointerClick, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { toast } from "sonner";
 import { KindToggle } from "../components/KindToggle";
+import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/Button";
 import { config } from "../config";
 import { useAvailability, useMyBookings, useResources } from "../hooks/queries";
@@ -121,15 +122,11 @@ export function PlanningPage() {
 
   return (
     <div className="space-y-5">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Planning</h1>
-          <p className="mt-1 flex items-center gap-1.5 text-zinc-500 dark:text-zinc-400">
-            <MousePointerClick className="size-4" /> Cliquez ou glissez sur un créneau libre pour réserver.
-          </p>
-        </div>
-        <KindToggle value={kind} onChange={setKind} id="planning-kind" compact />
-      </header>
+      <PageHeader
+        title="Planning"
+        subtitle="Vue d'ensemble de la journée. Cliquez ou faites glisser sur un créneau libre pour réserver."
+        actions={<KindToggle value={kind} onChange={setKind} />}
+      />
 
       <div className="card overflow-hidden">
         <div className="flex flex-wrap items-center gap-2 border-b border-zinc-200/80 px-4 py-3 dark:border-white/10">

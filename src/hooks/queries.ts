@@ -2,7 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient, type QueryClie
 import { addDays, startOfDay } from "date-fns";
 import { useEffect, useState } from "react";
 import { service } from "../services";
-import type { AvailabilityMap, Booking, BookingRequest, Resource, ResourceKind } from "../types";
+import type { AvailabilityMap, Booking, BookingRequest, BookingStep, KeyLog, Resource, ResourceKind, VehicleBooking } from "../types";
 
 export const keys = {
   me: ["me"] as const,
@@ -13,7 +13,35 @@ export const keys = {
   peopleAvailability: (emails: string[], from: Date, to: Date) =>
     ["people-availability", [...emails].sort().join(","), from.getTime(), to.getTime()] as const,
   bookings: ["bookings"] as const,
+  role: ["role"] as const,
+  vehicleBookings: (from: Date, to: Date) => ["vehicle-bookings", from.getTime(), to.getTime()] as const,
 };
+
+export function useRole() {
+  return useQuery({ queryKey: keys.role, queryFn: () => service.getRole(), staleTime: Infinity });
+}
+
+export function useVehicleBookings(from: Date, to: Date, enabled = true) {
+  return useQuery({
+    queryKey: keys.vehicleBookings(from, to),
+    queryFn: () => service.listVehicleBookings(from, to),
+    enabled,
+    placeholderData: keepPreviousData,
+    refetchInterval: 30_000,
+  });
+}
+
+export function useUpdateKeyLog() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ booking, log }: { booking: VehicleBooking; log: KeyLog }) => service.updateKeyLog(booking, log),
+    onSuccess: (updated) => {
+      client.setQueriesData<VehicleBooking[]>({ queryKey: ["vehicle-bookings"] }, (list) =>
+        list?.map((b) => (b.id === updated.id ? updated : b)),
+      );
+    },
+  });
+}
 
 export function useMe() {
   return useQuery({ queryKey: keys.me, queryFn: () => service.getCurrentUser(), staleTime: Infinity });
@@ -116,8 +144,11 @@ function addOptimisticSlot(client: QueryClient, booking: Booking, resourceId: st
 export function useCreateBooking() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: (request: BookingRequest) => service.createBooking(request),
-    onSuccess: (booking, request) => {
+    mutationFn: ({ request, onStep }: { request: BookingRequest; onStep?: (step: BookingStep) => void }) =>
+      service.createBooking(request, onStep),
+    // Créneau pris entre-temps : on rafraîchit immédiatement les disponibilités affichées.
+    onError: () => void client.invalidateQueries({ queryKey: ["availability"] }),
+    onSuccess: (booking, { request }) => {
       addOptimisticSlot(client, booking, request.resource.id);
       client.setQueryData<Booking[]>(keys.bookings, (list) =>
         list ? [...list, booking].sort((a, b) => a.start.getTime() - b.start.getTime()) : list,
@@ -126,6 +157,7 @@ export function useCreateBooking() {
       setTimeout(() => {
         void client.invalidateQueries({ queryKey: ["availability"] });
         void client.invalidateQueries({ queryKey: keys.bookings });
+        void client.invalidateQueries({ queryKey: ["vehicle-bookings"] });
       }, 6000);
     },
   });

@@ -1,17 +1,25 @@
-import { addMinutes } from "date-fns";
 import { CalendarDays, CircleAlert, CircleCheck, MessageSquareText, PencilLine, Send, TriangleAlert, Users, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { config } from "../config";
-import { availabilityWindow, useAvailability, useCreateBooking, useMe, usePeopleAvailability, useResources } from "../hooks/queries";
+import {
+  availabilityWindow,
+  useAvailability,
+  useCreateBooking,
+  useMe,
+  useMyBookings,
+  usePeopleAvailability,
+  useResources,
+} from "../hooks/queries";
+import { BookingConflictError, validateBooking } from "../lib/rules";
 import { conflictsWith, personState } from "../lib/availability";
 import { cn } from "../lib/cn";
 import { KIND_LABEL } from "../lib/features";
 import { combine, dayKey, fmtDuration, fmtLongDate, fmtTime, format, timeOptions } from "../lib/time";
 import { GraphError } from "../services/graph";
 import { useBooking, type Selection } from "../store";
-import type { Booking, Person } from "../types";
+import type { Booking, BookingStep, Person } from "../types";
 import { PeoplePicker } from "./PeoplePicker";
 import { SuccessView } from "./SuccessView";
 import { Button } from "./ui/Button";
@@ -74,11 +82,12 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const create = useCreateBooking();
+  const { data: myBookings } = useMyBookings();
+  const [step, setStep] = useState<BookingStep | null>(null);
 
   const start = combine(day, startTime);
   const end = combine(resource.kind === "vehicle" ? endDay : day, endTime);
   const validRange = end > start;
-  const past = start < addMinutes(new Date(), -5);
 
   // Disponibilité de la ressource (même cache que la page de recherche).
   const { from, to } = availabilityWindow(start, validRange ? end : start);
@@ -95,22 +104,32 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
 
   const headcount = attendees.length + 1;
   const overCapacity = resource.capacity !== undefined && headcount > resource.capacity;
-  const blocked = !validRange || past || conflicts.length > 0;
   const finalSubject = subject.trim() || (resource.kind === "room" ? `Réunion · ${resource.name}` : `Déplacement · ${resource.name}`);
+  const ruleErrors = validateBooking({ resource, start, end, attendees, subject: finalSubject }, myBookings ?? []);
+  const blocked = ruleErrors.length > 0 || conflicts.length > 0;
 
   const submit = async () => {
     if (blocked || create.isPending) return;
     try {
-      const booking = await create.mutateAsync({ resource, start, end, subject: finalSubject, attendees, message, teamsMeeting: teams });
+      const booking = await create.mutateAsync({
+        request: { resource, start, end, subject: finalSubject, attendees, message, teamsMeeting: teams },
+        onStep: setStep,
+      });
       onBooked(booking);
     } catch (error) {
-      const description =
-        error instanceof GraphError && error.status === 403
-          ? "Accès refusé par Microsoft 365. Vérifiez les autorisations de l'application."
-          : error instanceof Error
-            ? error.message
-            : "Erreur inattendue";
-      toast.error("La réservation n'a pas abouti", { description });
+      if (error instanceof BookingConflictError) {
+        toast.error("Créneau déjà pris", { description: error.message });
+      } else {
+        const description =
+          error instanceof GraphError && error.status === 403
+            ? "Accès refusé par Microsoft 365. Vérifiez les autorisations de l'application."
+            : error instanceof Error
+              ? error.message
+              : "Erreur inattendue";
+        toast.error("La réservation n'a pas abouti", { description });
+      }
+    } finally {
+      setStep(null);
     }
   };
 
@@ -224,10 +243,14 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
           </AnimatePresence>
 
           <div className="mt-3 border-t border-zinc-200/80 pt-3 text-sm dark:border-white/10">
-            {past ? (
-              <p className="flex items-center gap-2 font-medium text-amber-700 dark:text-amber-300">
-                <CircleAlert className="size-4" /> Ce créneau est déjà passé.
-              </p>
+            {ruleErrors.length > 0 ? (
+              <ul className="space-y-1">
+                {ruleErrors.map((e) => (
+                  <li key={e} className="flex items-start gap-2 font-medium text-amber-700 dark:text-amber-300">
+                    <CircleAlert className="mt-0.5 size-4 shrink-0" /> {e}
+                  </li>
+                ))}
+              </ul>
             ) : conflicts.length > 0 ? (
               <p className="flex items-center gap-2 font-medium text-rose-700 dark:text-rose-300">
                 <TriangleAlert className="size-4 shrink-0" />
@@ -371,11 +394,15 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
 
       {/* Pied */}
       <div className="shrink-0 border-t border-zinc-200/80 bg-white/90 px-5 py-4 backdrop-blur dark:border-white/10 dark:bg-[#121214]/90">
-        <p className="mb-3 text-center text-xs text-zinc-500 dark:text-zinc-400">
-          {attendees.length > 0
-            ? `${attendees.length} invitation${attendees.length > 1 ? "s" : ""} envoyée${attendees.length > 1 ? "s" : ""} dans Outlook · visible${attendees.length > 1 ? "s" : ""} dans le calendrier Teams`
-            : "L'événement sera ajouté à votre calendrier Outlook et Teams"}
-        </p>
+        {step ? (
+          <BookingProgress step={step} hasAttendees={attendees.length > 0} kind={resource.kind} />
+        ) : (
+          <p className="mb-3 text-center text-xs text-zinc-500 dark:text-zinc-400">
+            {attendees.length > 0
+              ? `${attendees.length} invitation${attendees.length > 1 ? "s" : ""} envoyée${attendees.length > 1 ? "s" : ""} dans Outlook · visible${attendees.length > 1 ? "s" : ""} dans le calendrier Teams`
+              : "L'événement sera ajouté à votre calendrier Outlook et Teams"}
+          </p>
+        )}
         <Button
           size="lg"
           className="w-full"
@@ -385,7 +412,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
           onClick={submit}
         >
           {create.isPending
-            ? "Réservation en cours…"
+            ? "Réservation sécurisée en cours…"
             : attendees.length > 0
               ? "Réserver et envoyer les invitations"
               : `Réserver ${KIND_LABEL[resource.kind].article}`}
@@ -396,6 +423,44 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
         </p>
       </div>
     </div>
+  );
+}
+
+const STEPS: { id: BookingStep; label: (kind: "room" | "vehicle") => string }[] = [
+  { id: "checking", label: () => "Vérification du créneau en temps réel" },
+  { id: "reserving", label: (k) => (k === "room" ? "Blocage de la salle" : "Blocage du véhicule") },
+  { id: "confirming", label: () => "Confirmation par Exchange (anti double réservation)" },
+  { id: "inviting", label: () => "Envoi des invitations Outlook / Teams" },
+];
+
+function BookingProgress({ step, hasAttendees, kind }: { step: BookingStep; hasAttendees: boolean; kind: "room" | "vehicle" }) {
+  const steps = STEPS.filter((s) => s.id !== "inviting" || hasAttendees);
+  const current = steps.findIndex((s) => s.id === step);
+  return (
+    <ol className="mb-3 space-y-1.5 text-xs" aria-live="polite">
+      {steps.map((s, i) => (
+        <li
+          key={s.id}
+          className={cn(
+            "flex items-center gap-2",
+            i < current
+              ? "text-zinc-500"
+              : i === current
+                ? "font-medium text-zinc-900 dark:text-white"
+                : "text-zinc-400 dark:text-zinc-600",
+          )}
+        >
+          {i < current ? (
+            <CircleCheck className="size-3.5 text-emerald-500" />
+          ) : i === current ? (
+            <span className="size-3.5 animate-spin rounded-full border-2 border-zinc-300 border-t-brand-500 dark:border-zinc-700 dark:border-t-brand-400" />
+          ) : (
+            <span className="size-3.5 rounded-full border border-zinc-300 dark:border-zinc-700" />
+          )}
+          {s.label(kind)}
+        </li>
+      ))}
+    </ol>
   );
 }
 

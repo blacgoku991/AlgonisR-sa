@@ -4,7 +4,7 @@ import { config } from "./config";
 import { combine, defaultStart } from "./lib/time";
 import type { Feature, Resource, ResourceKind } from "./types";
 
-export type View = "book" | "planning" | "bookings";
+export type View = "book" | "planning" | "bookings" | "reception";
 
 export interface Selection {
   resource: Resource;

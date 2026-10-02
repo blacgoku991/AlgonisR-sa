@@ -1,10 +1,11 @@
-import { CalendarPlus, CarFront, CircleCheck, CircleDashed, CircleX, Clock, DoorOpen, ExternalLink, RefreshCw, Trash } from "lucide-react";
+import { CalendarPlus, CarFront, DoorOpen, ExternalLink, KeyRound, RefreshCw, Trash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { AlertDialog } from "radix-ui";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { AvatarStack } from "../components/ui/Avatar";
 import { Button } from "../components/ui/Button";
+import { PageHeader } from "../components/ui/PageHeader";
 import { TeamsLogo } from "../components/ui/TeamsLogo";
 import { useCancelBooking, useMyBookings } from "../hooks/queries";
 import { cn } from "../lib/cn";
@@ -30,30 +31,31 @@ export function BookingsPage() {
   const count = groups.reduce((n, [, list]) => n + list.length, 0);
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Mes réservations</h1>
-          <p className="mt-1 text-zinc-500 dark:text-zinc-400">
-            {count > 0
-              ? `${count} réservation${count > 1 ? "s" : ""} à venir · synchronisées avec Outlook et Teams`
-              : "Synchronisées avec Outlook et Teams"}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" icon={<RefreshCw className={cn(isFetching && "animate-spin")} />} onClick={() => refetch()}>
-            Actualiser
-          </Button>
-          <Button icon={<CalendarPlus />} onClick={() => navigate("book")}>
-            Réserver
-          </Button>
-        </div>
-      </header>
+    <>
+      <PageHeader
+        title="Mes réservations"
+        subtitle={count > 0 ? `${count} à venir · synchronisées avec Outlook et Teams` : "Synchronisées avec Outlook et Teams"}
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<RefreshCw className={cn(isFetching && "animate-spin")} />}
+              onClick={() => refetch()}
+            >
+              Actualiser
+            </Button>
+            <Button size="sm" icon={<CalendarPlus />} onClick={() => navigate("book")}>
+              Nouvelle réservation
+            </Button>
+          </>
+        }
+      />
 
       {isLoading ? (
-        <div className="space-y-3">
+        <div className="card space-y-3 p-5">
           {Array.from({ length: 3 }, (_, i) => (
-            <div key={i} className="skeleton h-28 rounded-xl" />
+            <div key={i} className="skeleton h-14" />
           ))}
         </div>
       ) : count === 0 ? (
@@ -62,16 +64,13 @@ export function BookingsPage() {
         <div className="space-y-8">
           {groups.map(([key, list]) => (
             <section key={key}>
-              <h2 className="sticky top-[72px] z-10 -mx-1 mb-3 flex items-center gap-2 px-1 py-1 text-sm font-semibold text-zinc-500 backdrop-blur dark:text-zinc-400">
-                {fmtRelativeDay(parseDayKey(key))}
-                <span className="rounded-full bg-zinc-200/70 px-2 text-[11px] text-zinc-600 dark:bg-white/10 dark:text-zinc-300">
-                  {list.length}
-                </span>
+              <h2 className="mb-2 text-sm font-medium">
+                {fmtRelativeDay(parseDayKey(key))} <span className="font-normal text-zinc-500">· {list.length}</span>
               </h2>
-              <div className="space-y-3">
+              <div className="card divide-y divide-zinc-200 overflow-hidden dark:divide-white/[0.06]">
                 <AnimatePresence initial={false}>
                   {list.map((b) => (
-                    <BookingCard key={b.id} booking={b} onCancel={() => setCancelling(b)} />
+                    <BookingRow key={b.id} booking={b} onCancel={() => setCancelling(b)} />
                   ))}
                 </AnimatePresence>
               </div>
@@ -81,98 +80,85 @@ export function BookingsPage() {
       )}
 
       <CancelDialog booking={cancelling} onClose={() => setCancelling(null)} />
-    </div>
+    </>
   );
 }
 
-const RESOURCE_STATUS: Record<ResponseStatus, { label: string; className: string; icon: typeof CircleCheck }> = {
-  accepted: { label: "Confirmée", className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300", icon: CircleCheck },
-  organizer: { label: "Confirmée", className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300", icon: CircleCheck },
-  tentativelyAccepted: { label: "Provisoire", className: "bg-amber-500/10 text-amber-700 dark:text-amber-300", icon: CircleDashed },
-  declined: { label: "Refusée", className: "bg-rose-500/10 text-rose-700 dark:text-rose-300", icon: CircleX },
-  none: { label: "En attente", className: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-300", icon: Clock },
-  notResponded: { label: "En attente", className: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-300", icon: Clock },
+const RESOURCE_STATUS: Record<ResponseStatus, { label: string; dot: string }> = {
+  accepted: { label: "Confirmée", dot: "bg-emerald-500" },
+  organizer: { label: "Confirmée", dot: "bg-emerald-500" },
+  tentativelyAccepted: { label: "Provisoire", dot: "bg-amber-500" },
+  declined: { label: "Refusée", dot: "bg-rose-500" },
+  none: { label: "En attente", dot: "bg-zinc-400" },
+  notResponded: { label: "En attente", dot: "bg-zinc-400" },
 };
 
-function BookingCard({ booking, onCancel }: { booking: Booking; onCancel: () => void }) {
+function BookingRow({ booking, onCancel }: { booking: Booking; onCancel: () => void }) {
   const now = new Date();
   const live = now >= booking.start && now < booking.end;
   const countdown = fmtCountdown(booking.start, booking.end, now);
   const vehicle = booking.resource?.kind === "vehicle";
   const Icon = vehicle ? CarFront : DoorOpen;
   const status = RESOURCE_STATUS[booking.resourceStatus];
-  const hue = booking.resource?.hue ?? 250;
   const minutes = Math.round((booking.end.getTime() - booking.start.getTime()) / 60000);
   const accepted = booking.attendees.filter((a) => a.status === "accepted").length;
 
   return (
     <motion.article
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -30, height: 0, marginTop: 0 }}
-      className={cn(
-        "card group relative flex flex-col gap-4 overflow-hidden p-4 sm:flex-row sm:items-center sm:p-5",
-        live && "ring-2 ring-emerald-500/40",
-      )}
+      layout="position"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, height: 0 }}
+      className="grid gap-x-6 gap-y-3 px-4 py-4 sm:px-5 lg:grid-cols-[110px_minmax(0,1fr)_auto] lg:items-center"
     >
-      <span
-        className="absolute inset-y-0 left-0 w-1.5"
-        style={{ background: `linear-gradient(to bottom, oklch(0.68 0.17 ${hue}), oklch(0.52 0.2 ${hue + 30}))` }}
-      />
-
-      <div className="flex items-center gap-4 sm:w-28 sm:flex-col sm:items-start sm:gap-0 sm:pl-2">
-        <p className="text-lg font-medium tabular-nums">{fmtTime(booking.start)}</p>
-        <p className="text-sm text-zinc-500 tabular-nums dark:text-zinc-400">
-          {fmtTime(booking.end)} <span className="text-zinc-400">· {fmtDuration(minutes)}</span>
+      <div className="tabular-nums">
+        <p className="text-sm font-medium">
+          {fmtTime(booking.start)} – {fmtTime(booking.end)}
         </p>
-        {countdown && (
-          <span
-            className={cn(
-              "mt-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
-              live ? "bg-emerald-500 text-white" : "bg-brand-500/10 text-brand-700 dark:text-brand-200",
-            )}
-          >
-            {countdown}
-          </span>
-        )}
+        <p className={cn("text-xs", live ? "font-medium text-emerald-600 dark:text-emerald-400" : "text-zinc-500")}>
+          {countdown ?? fmtDuration(minutes)}
+        </p>
       </div>
 
-      <div className="min-w-0 flex-1 sm:border-l sm:border-zinc-200/80 sm:pl-5 dark:sm:border-white/10">
-        <h3 className="truncate text-base font-semibold">{booking.subject}</h3>
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-zinc-600 dark:text-zinc-300">
-          <span className="flex items-center gap-1.5">
-            <Icon className="size-4 text-zinc-400" /> {booking.resourceName}
+      <div className="min-w-0">
+        <h3 className="truncate text-sm font-medium">{booking.subject}</h3>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500">
+          <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+            <Icon className="size-3.5" strokeWidth={1.75} /> {booking.resourceName}
           </span>
-          <span className={cn("flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold", status.className)}>
-            <status.icon className="size-3" /> {status.label}
+          <span className="flex items-center gap-1.5">
+            <span className={cn("size-1.5 rounded-full", status.dot)} /> {status.label}
           </span>
           {booking.teamsJoinUrl && (
-            <span className="flex items-center gap-1 text-xs text-zinc-500">
-              <TeamsLogo className="size-4" /> Teams
+            <span className="flex items-center gap-1">
+              <TeamsLogo className="size-3.5" /> Teams
+            </span>
+          )}
+          {booking.attendees.length > 0 && (
+            <span className="flex items-center gap-1.5">
+              <AvatarStack people={booking.attendees} max={4} size={18} />
+              {booking.attendees.length} invité{booking.attendees.length > 1 ? "s" : ""}
+              {accepted > 0 && ` · ${accepted} ✓`}
             </span>
           )}
         </div>
-        {booking.attendees.length > 0 && (
-          <div className="mt-3 flex items-center gap-2.5">
-            <AvatarStack people={booking.attendees} max={5} size={26} />
-            <span className="text-xs text-zinc-500">
-              {booking.attendees.length} invité{booking.attendees.length > 1 ? "s" : ""}
-              {accepted > 0 && ` · ${accepted} accepté${accepted > 1 ? "s" : ""}`}
-            </span>
-          </div>
+        {vehicle && (
+          <p className="mt-1.5 flex items-center gap-1.5 text-xs text-zinc-500">
+            <KeyRound className="size-3.5" /> Clés à retirer à l'accueil
+            {booking.resource?.location ? ` · véhicule : ${booking.resource.location}` : ""}
+          </p>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2 sm:flex-col sm:items-stretch lg:flex-row lg:items-center">
+      <div className="flex flex-wrap items-center gap-2">
         {booking.teamsJoinUrl && (
           <a
             href={booking.teamsJoinUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-teams px-3.5 text-[13px] font-semibold text-white transition hover:brightness-110"
+            className="inline-flex h-8 items-center gap-1.5 rounded-md bg-teams px-3 text-[13px] font-medium text-white transition hover:brightness-110"
           >
-            <TeamsLogo className="size-4" /> Rejoindre
+            Rejoindre
           </a>
         )}
         {booking.webLink && (
@@ -180,18 +166,12 @@ function BookingCard({ booking, onCancel }: { booking: Booking; onCancel: () => 
             href={booking.webLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3.5 text-[13px] font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-white/10 dark:bg-white/5 dark:text-zinc-200"
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-zinc-200 px-3 text-[13px] font-medium transition hover:bg-zinc-50 dark:border-white/10 dark:hover:bg-white/[0.05]"
           >
-            <ExternalLink className="size-4" /> Outlook
+            <ExternalLink className="size-3.5" /> Outlook
           </a>
         )}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-9 text-rose-600 hover:bg-rose-500/10 hover:text-rose-700 dark:text-rose-400"
-          icon={<Trash />}
-          onClick={onCancel}
-        >
+        <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400" onClick={onCancel}>
           Annuler
         </Button>
       </div>
@@ -256,18 +236,12 @@ function CancelDialog({ booking, onClose }: { booking: Booking | null; onClose: 
 
 function Empty() {
   return (
-    <div className="card flex flex-col items-center px-6 py-16 text-center">
-      <div className="relative">
-        <span className="flex size-12 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 dark:border-white/[0.08]">
-          <CalendarPlus className="size-5" />
-        </span>
-      </div>
-      <h3 className="mt-5 text-base font-semibold">Aucune réservation à venir</h3>
-      <p className="mt-1 max-w-sm text-sm text-zinc-500">
-        Réservez une salle ou un véhicule en quelques secondes — vos invités le recevront directement dans Outlook et Teams.
-      </p>
-      <Button className="mt-6" size="lg" icon={<CalendarPlus />} onClick={() => navigate("book")}>
-        Faire une réservation
+    <div className="card flex flex-col items-center px-6 py-14 text-center">
+      <CalendarPlus className="size-6 text-zinc-400" strokeWidth={1.5} />
+      <h3 className="mt-3 font-medium">Aucune réservation à venir</h3>
+      <p className="mt-1 max-w-sm text-sm text-zinc-500">Vos réservations de salles et de véhicules apparaîtront ici.</p>
+      <Button className="mt-5" size="sm" icon={<CalendarPlus />} onClick={() => navigate("book")}>
+        Nouvelle réservation
       </Button>
     </div>
   );

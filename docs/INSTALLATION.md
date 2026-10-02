@@ -47,6 +47,8 @@ Le script (relançable sans risque) :
 - rend les créneaux visibles par tous (droit *LimitedDetails* : horaires + organisateur) ;
 - génère `public/catalog.json` avec vos véhicules.
 
+**Accueil (clés des véhicules)** : créez d'abord un groupe de sécurité à extension messagerie (ex. `accueil@contoso.com`) contenant les personnes de l'accueil, puis ajoutez `-ReceptionGroup accueil@contoso.com` à la commande. Le groupe reçoit le droit *Éditeur* sur le calendrier des véhicules ; personne d'autre ne peut modifier le suivi des clés.
+
 Options : `-ShowSubjects` pour afficher aussi l'objet des réunions dans le planning (sinon seul l'organisateur est visible), `-BookingWindowInDays 365` pour autoriser les réservations à un an, `-WhatIf` pour simuler.
 
 ### Méthode manuelle (centre d'administration Exchange)
@@ -93,10 +95,12 @@ Le script crée l'application, déclare les URI de redirection, demande les auto
    | `User.ReadBasic.All` | Photos et recherche des collègues |
    | `People.Read` | Suggestions d'invités |
    | `Calendars.ReadWrite` | Disponibilités, création et annulation des réservations |
+   | `Calendars.ReadWrite.Shared` | Accueil : suivi des clés sur le calendrier des véhicules (n'ouvre aucun accès : Exchange ne l'autorise qu'au groupe Accueil) |
    | `Place.Read.All` | Liste des salles |
 
 4. Cliquez sur **Accorder un consentement d'administrateur pour …**.
-5. Notez l'**ID d'application (client)** et l'**ID de l'annuaire (locataire)** (page *Vue d'ensemble*).
+5. **Configuration du jeton** › *Ajouter une revendication de groupes* › **Groupes de sécurité** (permet à l'application de reconnaître les membres du groupe Accueil).
+6. Notez l'**ID d'application (client)** et l'**ID de l'annuaire (locataire)** (page *Vue d'ensemble*).
 
 > Il s'agit uniquement d'autorisations **déléguées** : l'application agit au nom de l'utilisateur connecté et ne peut rien faire de plus que lui. Aucun secret client n'est créé.
 
@@ -115,6 +119,8 @@ VITE_APP_NAME=Réza
 VITE_COMPANY_NAME=AlgonisR
 APP_PUBLIC_URL=https://reservations.contoso.com
 TEAMS_APP_ID=<un GUID, généré au premier « npm run teams:package »>
+# Espace Accueil : ID d'objet du groupe Entra ID « Accueil » (Entra › Groupes › Accueil)
+VITE_RECEPTION_GROUP_ID=<ID d'objet du groupe>
 ```
 
 Vérifiez `public/catalog.json` (véhicules, compléments des salles) — voir le [README](../README.md#configuration).
@@ -155,6 +161,10 @@ La configuration `staticwebapp.config.json` fournie applique déjà ces en-tête
    et créez les variables `VITE_AZURE_CLIENT_ID` / `VITE_AZURE_TENANT_ID` dans *GitHub › Settings › Secrets and variables › Actions › Variables*.
 4. (Facultatif) **Domaines personnalisés** › `reservations.contoso.com`.
 
+### Vercel
+
+Le fichier `vercel.json` fourni configure la compilation et les en-têtes de sécurité. Dans le projet Vercel › **Settings › Environment Variables**, ajoutez `VITE_AZURE_CLIENT_ID`, `VITE_AZURE_TENANT_ID`, `VITE_COMPANY_NAME` et `VITE_RECEPTION_GROUP_ID`, puis redéployez. Déclarez l'URL Vercel (ou votre domaine) dans Entra ID (étape 2).
+
 ### Autres hébergements
 
 IIS, Nginx, Netlify, Vercel… conviennent : reproduisez les en-têtes de `staticwebapp.config.json`.
@@ -190,6 +200,26 @@ Dans Teams et Outlook, la connexion est automatique (*Nested App Authentication*
 
 ---
 
+## Sécurité : comment la double réservation est empêchée
+
+1. **Avant** : l'application refuse les créneaux passés, trop longs, trop lointains, et empêche une même personne de réserver deux véhicules en même temps.
+2. **Au moment de valider** : la disponibilité est revérifiée en direct auprès d'Exchange (pas de cache).
+3. **Pendant** : l'événement est créé avec la ressource seule ; c'est la boîte aux lettres de la salle / du véhicule (Exchange) qui accepte ou refuse, en appliquant `AllowConflicts = $false`. Exchange traite les demandes une par une : si deux personnes valident à la même seconde, une seule est acceptée.
+4. **Après** : les invitations ne partent qu'une fois la ressource confirmée. En cas de refus, l'événement est supprimé automatiquement et l'utilisateur est prévenu — aucun invité n'est dérangé.
+
+Autres protections : connexion Microsoft Entra ID uniquement (aucun mot de passe stocké), autorisations déléguées (chacun n'agit qu'avec ses propres droits), droits Exchange limitant l'accueil aux seuls calendriers des véhicules, en-têtes de sécurité stricts (CSP sans script en ligne, HSTS, affichage en iframe limité à Teams/Outlook), contenu des invitations échappé.
+
+## Espace Accueil — remise des clés
+
+Visible uniquement pour les membres du groupe Accueil (`VITE_RECEPTION_GROUP_ID`, ou liste d'adresses `VITE_RECEPTION_EMAILS`).
+
+- **Départs du jour** : véhicules à remettre, avec le nom de l'emprunteur (lien direct pour lui écrire sur Teams ou par e-mail).
+- **Remettre** : enregistre l'heure, la personne de l'accueil et le kilométrage de départ.
+- **Retour** : enregistre l'heure, le kilométrage (contrôlé : supérieur au départ) et l'état du véhicule.
+- **Retours en retard** : signalés en rouge dès que l'heure de fin est dépassée.
+
+Le suivi est enregistré directement sur l'événement du calendrier du véhicule (Exchange) : il est partagé entre tous les postes de l'accueil, sans base de données.
+
 ## Dépannage
 
 | Symptôme | Cause probable / solution |
@@ -201,4 +231,6 @@ Dans Teams et Outlook, la connexion est automatique (*Nested App Authentication*
 | `AADSTS50011` (redirect URI mismatch) | L'URI `https://<domaine>/redirect.html` n'est pas déclarée en plateforme **SPA** dans Entra ID. |
 | `AADSTS65001` (consentement) | Accordez le consentement administrateur (étape 2). |
 | Écran blanc dans Teams | Le domaine n'est pas dans `validDomains` (régénérez le package avec le bon `APP_PUBLIC_URL`) ou l'hébergeur bloque l'affichage en iframe (`frame-ancestors`). |
+| Pas d'onglet « Accueil » | L'utilisateur n'est pas dans le groupe Accueil, ou la revendication de groupes n'est pas activée (étape 2, point 5), ou `VITE_RECEPTION_GROUP_ID` est absent. |
+| « Accès refusé aux calendriers des véhicules » | Relancez le script Exchange avec `-ReceptionGroup accueil@contoso.com`. |
 | Pas de photo de profil | Normal pour les invités externes ; sinon vérifiez `User.ReadBasic.All`. |

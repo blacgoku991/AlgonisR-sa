@@ -9,6 +9,7 @@ import { useTheme } from "./hooks/useTheme";
 import { BookingsPage } from "./pages/BookingsPage";
 import { BookPage } from "./pages/BookPage";
 import { PlanningPage } from "./pages/PlanningPage";
+import { ReceptionPage } from "./pages/ReceptionPage";
 import { SignInPage } from "./pages/SignInPage";
 import { useView } from "./router";
 import { initAuth, signIn as authSignIn, signOut as authSignOut } from "./services/auth";
@@ -70,7 +71,15 @@ function Routes() {
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
-        {view === "planning" ? <PlanningPage /> : view === "bookings" ? <BookingsPage /> : <BookPage />}
+        {view === "planning" ? (
+          <PlanningPage />
+        ) : view === "bookings" ? (
+          <BookingsPage />
+        ) : view === "reception" ? (
+          <ReceptionPage />
+        ) : (
+          <BookPage />
+        )}
       </motion.div>
     </AnimatePresence>
   );

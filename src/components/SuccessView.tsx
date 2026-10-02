@@ -1,4 +1,4 @@
-import { Check, Copy, ExternalLink, Mail } from "lucide-react";
+import { Check, Copy, ExternalLink, KeyRound, Mail } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { config } from "../config";
@@ -78,8 +78,15 @@ export function SuccessView({ booking, resource, onClose }: { booking: Booking; 
           </p>
           <p className="flex items-start gap-2.5 text-zinc-600 dark:text-zinc-300">
             <Check className="mt-0.5 size-4 shrink-0 text-zinc-500" />
-            {resource.kind === "room" ? "La salle" : "Le véhicule"} confirme automatiquement la réservation.
+            {resource.kind === "room" ? "La salle a" : "Le véhicule a"} confirmé la réservation : le créneau est bloqué pour tout le monde.
           </p>
+          {resource.kind === "vehicle" && (
+            <p className="flex items-start gap-2.5 text-zinc-600 dark:text-zinc-300">
+              <KeyRound className="mt-0.5 size-4 shrink-0 text-zinc-500" />
+              Retirez les clés à l'accueil le jour du départ{resource.location ? ` (véhicule : ${resource.location})` : ""}. L'accueil voit
+              déjà votre réservation.
+            </p>
+          )}
           {invited > 0 && (
             <div className="pt-2 pl-6.5">
               <AvatarStack people={booking.attendees} max={8} size={26} />

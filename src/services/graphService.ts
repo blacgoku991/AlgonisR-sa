@@ -4,6 +4,10 @@ import type {
   BookingAttendee,
   BookingRequest,
   BookingService,
+  BookingStep,
+  KeyLog,
+  Role,
+  VehicleBooking,
   BusySlot,
   BusyStatus,
   CurrentUser,
@@ -16,6 +20,9 @@ import type {
 import { entryToResource, floorLabel, hueFor, loadCatalog } from "./catalog";
 import { fromGraphDate, graph, graphAll, GraphError, toGraphLocal, toGraphUtc, type GraphDateTime } from "./graph";
 import { buildInvitationBody } from "./invitation";
+import { getIdTokenClaims } from "./auth";
+import { config } from "../config";
+import { BookingConflictError } from "../lib/rules";
 
 // ── Types Graph (sous-ensemble utile) ────────────────────────
 
@@ -72,7 +79,11 @@ interface GraphEvent {
   location?: { displayName?: string; locationEmailAddress?: string };
   locations?: { displayName?: string; locationEmailAddress?: string }[];
   onlineMeeting?: { joinUrl?: string } | null;
+  singleValueExtendedProperties?: { id: string; value: string }[];
 }
+
+/** Propriété MAPI nommée qui stocke le suivi des clés sur l'événement du véhicule. */
+const KEY_LOG_PROPERTY = "String {00020329-0000-0000-C000-000000000046} Name RezaKeyLog";
 
 interface GraphPerson {
   id: string;
@@ -282,9 +293,37 @@ export class GraphBookingService implements BookingService {
       }));
   }
 
-  async createBooking(request: BookingRequest): Promise<Booking> {
+  async getRole(): Promise<Role> {
+    const me = await this.getCurrentUser();
+    const claims = getIdTokenClaims();
+    const groups = Array.isArray(claims.groups) ? (claims.groups as string[]) : [];
+    const reception =
+      (config.receptionGroupId !== "" && groups.includes(config.receptionGroupId)) || config.receptionEmails.includes(lower(me.email));
+    return { reception };
+  }
+
+  /**
+   * Réservation sécurisée, en 4 temps :
+   * 1. revérification en direct de la disponibilité ;
+   * 2. création de l'événement avec la ressource seule (aucun invité encore prévenu) ;
+   * 3. attente de la réponse de la boîte de ressource Exchange, seule source de vérité
+   *    (elle refuse tout chevauchement, même si deux personnes valident à la même seconde) ;
+   * 4. ajout des invités → envoi des invitations Outlook / calendrier Teams.
+   * En cas de refus, l'événement est supprimé et personne n'est dérangé.
+   */
+  async createBooking(request: BookingRequest, onStep?: (step: BookingStep) => void): Promise<Booking> {
     const { resource } = request;
-    const transactionId = crypto.randomUUID();
+    const known = new Map([[resource.id, resource]]);
+
+    onStep?.("checking");
+    const fresh = await this.getAvailability([resource.email], request.start, request.end);
+    const conflict = fresh[resource.id]?.busy.find(
+      (s) => ["busy", "tentative", "oof"].includes(s.status) && s.start < request.end && request.start < s.end,
+    );
+    if (conflict) throw new BookingConflictError();
+
+    onStep?.("reserving");
+    const resourceAttendee = { emailAddress: { address: resource.email, name: resource.name }, type: "resource" };
     const build = (useUtc: boolean) => ({
       subject: request.subject,
       body: { contentType: "HTML", content: buildInvitationBody(request) },
@@ -295,17 +334,14 @@ export class GraphBookingService implements BookingService {
         locationEmailAddress: resource.email,
         locationType: resource.kind === "room" ? "conferenceRoom" : "default",
       },
-      attendees: [
-        ...request.attendees.map((p) => ({ emailAddress: { address: p.email, name: p.name }, type: "required" })),
-        { emailAddress: { address: resource.email, name: resource.name }, type: "resource" },
-      ],
+      attendees: [resourceAttendee],
       isOnlineMeeting: request.teamsMeeting,
       ...(request.teamsMeeting ? { onlineMeetingProvider: "teamsForBusiness" } : {}),
       allowNewTimeProposals: request.attendees.length > 0,
       responseRequested: true,
       showAs: "busy",
       // Idempotence : un double clic ou une reprise réseau ne crée pas de doublon.
-      transactionId,
+      transactionId: crypto.randomUUID(),
     });
 
     let event: GraphEvent;
@@ -319,7 +355,97 @@ export class GraphBookingService implements BookingService {
         throw error;
       }
     }
-    return this.mapEvent(event, new Map([[resource.id, resource]]));
+
+    onStep?.("confirming");
+    const response = await this.waitForResource(event.id, resource.email);
+    if (response === "declined") {
+      await graph(`/me/events/${encodeURIComponent(event.id)}`, { method: "DELETE" }).catch(() => undefined);
+      throw new BookingConflictError(
+        `${resource.name} vient d'être réservé${resource.kind === "room" ? "e" : ""} par quelqu'un d'autre sur ce créneau. Aucune invitation n'a été envoyée.`,
+      );
+    }
+
+    if (request.attendees.length > 0) {
+      onStep?.("inviting");
+      event = await graph<GraphEvent>(`/me/events/${encodeURIComponent(event.id)}`, {
+        method: "PATCH",
+        body: {
+          attendees: [
+            ...request.attendees.map((p) => ({ emailAddress: { address: p.email, name: p.name }, type: "required" })),
+            resourceAttendee,
+          ],
+        },
+      });
+    }
+    const booking = this.mapEvent(event, known);
+    return { ...booking, resourceStatus: response === "accepted" ? "accepted" : booking.resourceStatus };
+  }
+
+  /** Attend la réponse automatique de la ressource (en général 2 à 10 s). */
+  private async waitForResource(eventId: string, email: string, timeoutMs = 30_000): Promise<ResponseStatus> {
+    const deadline = Date.now() + timeoutMs;
+    let delay = 1200;
+    while (Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, delay));
+      delay = Math.min(delay * 1.4, 4000);
+      const ev = await graph<GraphEvent>(`/me/events/${encodeURIComponent(eventId)}?$select=attendees`).catch(() => null);
+      const status = ev?.attendees?.find((a) => lower(a.emailAddress.address) === lower(email))?.status?.response;
+      if (status === "accepted" || status === "declined") return status;
+    }
+    return "none";
+  }
+
+  async listVehicleBookings(from: Date, to: Date): Promise<VehicleBooking[]> {
+    const vehicles = await this.listResources("vehicle");
+    const params = new URLSearchParams({
+      startDateTime: from.toISOString(),
+      endDateTime: to.toISOString(),
+      $select: "id,subject,start,end,organizer,isCancelled",
+      $orderby: "start/dateTime",
+      $top: "100",
+      $expand: `singleValueExtendedProperties($filter=id eq '${KEY_LOG_PROPERTY}')`,
+    });
+    const results = await Promise.allSettled(
+      vehicles.map(async (vehicle) => {
+        const events = await graphAll<GraphEvent>(`/users/${encodeURIComponent(vehicle.email)}/calendarView?${params}`, undefined, 500);
+        return events.filter((e) => !e.isCancelled).map((e) => this.mapVehicleEvent(e, vehicle));
+      }),
+    );
+    if (vehicles.length > 0 && results.every((r) => r.status === "rejected")) {
+      throw new Error(
+        "Accès refusé aux calendriers des véhicules. L'administrateur doit donner au groupe Accueil le droit « Éditeur » sur ces calendriers.",
+      );
+    }
+    return results.flatMap((r) => (r.status === "fulfilled" ? r.value : [])).sort((a, b) => a.start.getTime() - b.start.getTime());
+  }
+
+  async updateKeyLog(booking: VehicleBooking, log: KeyLog): Promise<VehicleBooking> {
+    const event = await graph<GraphEvent>(`/users/${encodeURIComponent(booking.vehicle.email)}/events/${encodeURIComponent(booking.id)}`, {
+      method: "PATCH",
+      body: { singleValueExtendedProperties: [{ id: KEY_LOG_PROPERTY, value: JSON.stringify(log) }] },
+    });
+    return { ...booking, keyLog: log, subject: event?.subject ?? booking.subject };
+  }
+
+  private mapVehicleEvent(event: GraphEvent, vehicle: Resource): VehicleBooking {
+    let keyLog: KeyLog = {};
+    const raw = event.singleValueExtendedProperties?.find((p) => p.id.toLowerCase() === KEY_LOG_PROPERTY.toLowerCase())?.value;
+    if (raw) {
+      try {
+        keyLog = JSON.parse(raw) as KeyLog;
+      } catch {
+        /* valeur illisible : ignorée */
+      }
+    }
+    return {
+      id: event.id,
+      vehicle,
+      subject: event.subject || "Réservation",
+      start: fromGraphDate(event.start),
+      end: fromGraphDate(event.end),
+      organizer: event.organizer ? personFromEmail(event.organizer) : undefined,
+      keyLog,
+    };
   }
 
   async listMyBookings(from: Date, to: Date): Promise<Booking[]> {

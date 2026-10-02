@@ -7,14 +7,7 @@
     <meta name="description" content="Réservez une salle ou un véhicule et invitez vos collègues — synchronisé avec Outlook et Teams." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Réza · Réservations</title>
-    <script>
-      // Thème sombre par défaut ; le choix « clair » de l'utilisateur est mémorisé.
-      (function () {
-        try {
-          if (localStorage.getItem("reza.theme") === "light") document.documentElement.classList.remove("dark");
-        } catch (e) {}
-      })();
-    </script>
+    <script src="/theme.js"></script>
   </head>
   <body>
     <div id="root"></div>

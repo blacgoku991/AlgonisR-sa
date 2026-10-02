@@ -96,6 +96,36 @@ export interface Booking {
   bodyPreview?: string;
 }
 
+/** Étapes d'une réservation sécurisée (affichées à l'utilisateur). */
+export type BookingStep = "checking" | "reserving" | "confirming" | "inviting";
+
+/** Suivi des clés d'un véhicule, tenu par l'accueil. */
+export interface KeyLog {
+  handedAt?: string;
+  handedBy?: string;
+  startKm?: number;
+  returnedAt?: string;
+  returnedBy?: string;
+  endKm?: number;
+  notes?: string;
+}
+
+export interface VehicleBooking {
+  /** Identifiant de l'événement dans le calendrier du véhicule. */
+  id: string;
+  vehicle: Resource;
+  subject: string;
+  start: Date;
+  end: Date;
+  organizer?: Person;
+  keyLog: KeyLog;
+}
+
+export interface Role {
+  /** Accès à l'espace Accueil (remise et retour des clés). */
+  reception: boolean;
+}
+
 export interface BookingService {
   readonly mode: "demo" | "m365";
   getCurrentUser(): Promise<CurrentUser>;
@@ -105,7 +135,12 @@ export interface BookingService {
   getAvailability(emails: string[], from: Date, to: Date): Promise<AvailabilityMap>;
   suggestPeople(): Promise<Person[]>;
   searchPeople(query: string): Promise<Person[]>;
-  createBooking(request: BookingRequest): Promise<Booking>;
+  getRole(): Promise<Role>;
+  /** Réservation sécurisée : revérifie le créneau, attend la confirmation de la ressource, puis invite. */
+  createBooking(request: BookingRequest, onStep?: (step: BookingStep) => void): Promise<Booking>;
   listMyBookings(from: Date, to: Date): Promise<Booking[]>;
   cancelBooking(booking: Booking, comment?: string): Promise<void>;
+  /** Accueil : toutes les réservations de véhicules sur la période. */
+  listVehicleBookings(from: Date, to: Date): Promise<VehicleBooking[]>;
+  updateKeyLog(booking: VehicleBooking, log: KeyLog): Promise<VehicleBooking>;
 }

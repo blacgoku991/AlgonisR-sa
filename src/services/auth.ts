@@ -115,3 +115,9 @@ export async function getAccessToken(scopes: string[] = graphScopes): Promise<st
 export function getHost(): HostInfo {
   return host;
 }
+
+/** Revendications du jeton d'identité (dont « groups » si l'inscription Entra ID les émet). */
+export function getIdTokenClaims(): Record<string, unknown> {
+  const account = pca?.getActiveAccount();
+  return (account?.idTokenClaims as Record<string, unknown> | undefined) ?? {};
+}

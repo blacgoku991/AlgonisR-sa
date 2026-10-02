@@ -14,6 +14,8 @@
       User.ReadBasic.All  Photos et recherche de collègues
       People.Read         Suggestions de participants
       Calendars.ReadWrite Disponibilités, création et annulation des réservations
+      Calendars.ReadWrite.Shared  Accueil : suivi des clés sur le calendrier des véhicules
+                          (n'ouvre aucun accès en soi : Exchange ne l'autorise qu'au groupe Accueil)
       Place.Read.All      Liste des salles de réunion Exchange
 
 .PARAMETER AppUrl
@@ -38,7 +40,7 @@ Connect-MgGraph -Scopes "Application.ReadWrite.All", "DelegatedPermissionGrant.R
 
 $graphAppId = "00000003-0000-0000-c000-000000000000"
 $graphSp = Get-MgServicePrincipal -Filter "appId eq '$graphAppId'"
-$scopes = @("User.Read", "User.ReadBasic.All", "People.Read", "Calendars.ReadWrite", "Place.Read.All")
+$scopes = @("User.Read", "User.ReadBasic.All", "People.Read", "Calendars.ReadWrite", "Calendars.ReadWrite.Shared", "Place.Read.All")
 
 $resourceAccess = foreach ($name in $scopes) {
     $scope = $graphSp.Oauth2PermissionScopes | Where-Object { $_.Value -eq $name }
@@ -53,6 +55,7 @@ if ($IncludeLocalhost) { $redirectUris += "http://localhost:5173/redirect.html" 
 Write-Host "Création de l'application « $DisplayName »…" -ForegroundColor Cyan
 $app = New-MgApplication -DisplayName $DisplayName `
     -SignInAudience "AzureADMyOrg" `
+    -GroupMembershipClaims "SecurityGroup" `
     -Spa @{ RedirectUris = $redirectUris } `
     -RequiredResourceAccess @(@{ ResourceAppId = $graphAppId; ResourceAccess = $resourceAccess })
 
@@ -72,5 +75,6 @@ Write-Host "`n✔ Application inscrite. Ajoutez ces lignes à .env.local :`n" -F
 Write-Host "VITE_AZURE_CLIENT_ID=$($app.AppId)"
 Write-Host "VITE_AZURE_TENANT_ID=$tenantId"
 Write-Host "APP_PUBLIC_URL=$AppUrl"
+Write-Host "VITE_RECEPTION_GROUP_ID=<ID d'objet du groupe Accueil>  (Entra › Groupes › Accueil › ID d'objet)"
 Write-Host "`nURI de redirection déclarés :" -ForegroundColor DarkGray
 $redirectUris | ForEach-Object { Write-Host "  $_" -ForegroundColor DarkGray }

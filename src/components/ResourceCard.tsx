@@ -32,7 +32,7 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="grid gap-x-6 gap-y-3 px-4 py-4 transition-colors hover:bg-zinc-50 sm:px-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_auto] lg:items-center dark:hover:bg-white/[0.02]"
+      className="grid gap-x-6 gap-y-3 px-4 py-4 transition-colors hover:bg-zinc-50 sm:px-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(160px,0.9fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center dark:hover:bg-white/[0.02]"
     >
       <div className="flex min-w-0 items-start gap-3.5">
         <Thumb resource={resource} />
@@ -63,7 +63,7 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
         </div>
       </div>
 
-      <div className="min-w-0">
+      <div className="min-w-0 lg:col-span-2 lg:row-start-2 xl:col-span-1 xl:row-start-auto">
         {sameDay ? (
           <DayTimeline day={startOfDay(start)} busy={busy} selection={{ start, end, ok: free && !past }} />
         ) : (
@@ -71,7 +71,7 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-3 lg:w-60 lg:justify-end">
+      <div className="flex items-center justify-between gap-3 lg:justify-end xl:w-56">
         <Status state={state} feminine={resource.kind === "room"} />
         {state.status === "busy" ? (
           <Button size="sm" variant="secondary" disabled={!state.nextFree || past} onClick={() => state.nextFree && onBook(state.nextFree)}>

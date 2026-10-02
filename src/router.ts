@@ -1,12 +1,13 @@
 import { useSyncExternalStore } from "react";
 import type { View } from "./store";
 
-const PATHS: Record<View, string> = { book: "#/", planning: "#/planning", bookings: "#/mes-reservations" };
+const PATHS: Record<View, string> = { book: "#/", planning: "#/planning", bookings: "#/mes-reservations", reception: "#/accueil" };
 
 function current(): View {
   const hash = window.location.hash;
   if (hash.startsWith("#/planning")) return "planning";
   if (hash.startsWith("#/mes-reservations")) return "bookings";
+  if (hash.startsWith("#/accueil")) return "reception";
   return "book";
 }
 
