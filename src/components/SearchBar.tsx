@@ -42,7 +42,7 @@ export function SearchBar() {
   const now = new Date();
 
   return (
-    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-[var(--line)] md:flex md:rounded-full">
+    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-[var(--line)] shadow-[0_20px_50px_-30px_rgb(15_23_42/0.35)] md:flex md:rounded-full">
       <Popover
         open={calendar}
         onOpenChange={setCalendar}
@@ -72,12 +72,12 @@ export function SearchBar() {
         ))}
       </SelectSegment>
 
-      <div className="col-span-2 flex items-center justify-between gap-3 bg-[var(--bg)] px-6 py-3 md:flex-1">
+      <div className="col-span-2 flex items-center justify-between gap-3 bg-surface px-6 py-4 md:flex-1">
         <div>
-          <p className="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-muted uppercase">
-            <Users className="size-3" /> {kind === "room" ? "Personnes" : "Places"}
+          <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-muted uppercase">
+            <Users className="size-3.5 text-brand-600" /> {kind === "room" ? "Personnes" : "Places"}
           </p>
-          <p className="text-[15px] font-medium tabular-nums">{people}</p>
+          <p className="text-base font-semibold tabular-nums">{people}</p>
         </div>
         <div className="flex items-center gap-1">
           <RoundButton label="Moins" disabled={people <= 1} onClick={() => setPeople(people - 1)}>
@@ -103,13 +103,13 @@ function Segment({
     <button
       type="button"
       {...props}
-      className={cn("flex flex-col items-start bg-[var(--bg)] px-6 py-3 text-left transition-colors hover:bg-surface", className)}
+      className={cn("flex flex-col items-start bg-surface px-6 py-4 text-left transition-colors hover:bg-surface-2", className)}
     >
-      <span className="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-muted uppercase [&_svg]:size-3">
+      <span className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-muted uppercase [&_svg]:size-3.5 [&_svg]:text-brand-600">
         {icon}
         {label}
       </span>
-      <span className="flex items-center gap-1 text-[15px] font-medium">
+      <span className="flex items-center gap-1 text-base font-semibold">
         {children}
         <ChevronDown className="size-3.5 text-muted" />
       </span>
@@ -131,12 +131,12 @@ function SelectSegment({
   children: ReactNode;
 }) {
   return (
-    <label className="relative flex cursor-pointer flex-col bg-[var(--bg)] px-6 py-3 transition-colors hover:bg-surface md:flex-1">
-      <span className="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-muted uppercase [&_svg]:size-3">
+    <label className="relative flex cursor-pointer flex-col bg-surface px-6 py-4 transition-colors hover:bg-surface-2 md:flex-1">
+      <span className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-muted uppercase [&_svg]:size-3.5 [&_svg]:text-brand-600">
         {icon}
         {label}
       </span>
-      <span className="flex items-center gap-1 text-[15px] font-medium tabular-nums">
+      <span className="flex items-center gap-1 text-base font-semibold tabular-nums">
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -144,7 +144,7 @@ function SelectSegment({
         >
           {children}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-5 bottom-4 size-3.5 text-muted" />
+        <ChevronDown className="pointer-events-none absolute right-5 bottom-5 size-3.5 text-muted" />
       </span>
     </label>
   );
@@ -167,7 +167,7 @@ function RoundButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex size-8 items-center justify-center rounded-full border border-line transition-colors hover:bg-surface disabled:opacity-30"
+      className="flex size-8 items-center justify-center rounded-full border border-line transition-colors hover:bg-surface-2 disabled:opacity-30"
     >
       {children}
     </button>
@@ -219,7 +219,7 @@ export function FilterChips({
           onChange={(e) => setQuery(e.target.value)}
           placeholder={kind === "room" ? "Rechercher une salle" : "Modèle, plaque…"}
           aria-label="Rechercher"
-          className="h-9 w-full rounded-full border border-line bg-transparent pr-8 pl-10 text-sm outline-none placeholder:text-muted focus:border-zinc-400"
+          className="h-10 w-full rounded-full border border-line bg-surface pr-8 pl-10 text-sm outline-none placeholder:text-muted focus:border-brand-500"
         />
         {query && (
           <button onClick={() => setQuery("")} className="absolute top-1/2 right-2.5 -translate-y-1/2 p-1 text-muted" aria-label="Effacer">
@@ -238,10 +238,10 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       onClick={onClick}
       aria-pressed={on}
       className={cn(
-        "h-9 shrink-0 rounded-full border px-4 text-[13px] whitespace-nowrap transition-colors",
+        "h-10 shrink-0 rounded-full border px-4.5 text-[13px] whitespace-nowrap transition-colors",
         on
-          ? "border-transparent bg-zinc-950 text-white dark:bg-white dark:text-zinc-950"
-          : "border-line text-zinc-700 hover:bg-surface dark:text-zinc-300",
+          ? "border-transparent bg-brand-600 text-accent-fg"
+          : "border-line bg-surface text-slate-700 hover:border-brand-300 dark:text-slate-300",
       )}
     >
       {children}

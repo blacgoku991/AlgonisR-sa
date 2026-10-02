@@ -70,18 +70,18 @@ export function SuccessView({ booking, resource, onClose }: { booking: Booking; 
         </dl>
 
         <div className="space-y-2 text-sm">
-          <p className="flex items-start gap-2.5 text-zinc-600 dark:text-zinc-300">
+          <p className="flex items-start gap-2.5 text-slate-600 dark:text-slate-300">
             <Mail className="mt-0.5 size-4 shrink-0 text-muted" />
             {invited > 0
               ? `Invitation envoyée dans la boîte Outlook de ${invited} personne${invited > 1 ? "s" : ""} ; elle apparaît aussi dans leur calendrier Teams.`
               : "L'événement est ajouté à votre calendrier Outlook et Teams."}
           </p>
-          <p className="flex items-start gap-2.5 text-zinc-600 dark:text-zinc-300">
+          <p className="flex items-start gap-2.5 text-slate-600 dark:text-slate-300">
             <Check className="mt-0.5 size-4 shrink-0 text-muted" />
             {resource.kind === "room" ? "La salle a" : "Le véhicule a"} confirmé la réservation : le créneau est bloqué pour tout le monde.
           </p>
           {resource.kind === "vehicle" && (
-            <p className="flex items-start gap-2.5 text-zinc-600 dark:text-zinc-300">
+            <p className="flex items-start gap-2.5 text-slate-600 dark:text-slate-300">
               <KeyRound className="mt-0.5 size-4 shrink-0 text-muted" />
               Retirez les clés à l'accueil le jour du départ{resource.location ? ` (véhicule : ${resource.location})` : ""}. L'accueil voit
               déjà votre réservation.

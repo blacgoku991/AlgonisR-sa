@@ -1,14 +1,12 @@
 @import "tailwindcss";
-@import "@fontsource-variable/geist";
-@import "@fontsource-variable/geist-mono";
+@import "@fontsource-variable/plus-jakarta-sans";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Geist Variable", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Consolas, monospace;
+  --font-sans: "Plus Jakarta Sans Variable", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
 
-  /* Encre : noir en thème clair, blanc en thème sombre (monochrome). */
+  /* Couleur principale (turquoise), adaptée à chaque thème. */
   --color-brand-50: var(--ink-ghost);
   --color-brand-100: var(--ink-ghost);
   --color-brand-200: var(--ink-soft);
@@ -87,44 +85,46 @@
 
 @layer base {
   :root {
-    --ink: #0a0a0a;
-    --ink-soft: #52525b;
-    --ink-ghost: #f4f4f5;
+    --ink: #0f766e;
+    --ink-soft: #5eaaa3;
+    --ink-ghost: #e6f4f2;
     --ink-fg: #ffffff;
-    --bg: #ffffff;
-    --surface: #f5f5f7;
-    --surface-2: #ececef;
-    --line: rgb(0 0 0 / 0.08);
-    --muted: #6e6e73;
+    --bg: #f6f4ef;
+    --surface: #ffffff;
+    --surface-2: #efece5;
+    --line: rgb(28 25 23 / 0.08);
+    --muted: #6f6a64;
+    --hero: #e3f1ee;
   }
   .dark {
-    --ink: #fafafa;
-    --ink-soft: #a1a1aa;
-    --ink-ghost: #18181b;
-    --ink-fg: #0a0a0a;
-    --bg: #000000;
-    --surface: #0f0f10;
-    --surface-2: #19191b;
-    --line: rgb(255 255 255 / 0.08);
-    --muted: #8e8e93;
+    --ink: #2dd4bf;
+    --ink-soft: #5eead4;
+    --ink-ghost: #12302f;
+    --ink-fg: #042f2e;
+    --bg: #0b1220;
+    --surface: #121b2e;
+    --surface-2: #1a2540;
+    --line: rgb(148 163 184 / 0.13);
+    --muted: #94a3b8;
+    --hero: #10263a;
   }
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-feature-settings: "ss01";
-    letter-spacing: -0.006em;
+    letter-spacing: -0.005em;
   }
   body {
     background: var(--bg);
-    @apply text-zinc-950 dark:text-zinc-50;
+    @apply text-slate-900 dark:text-slate-100;
     min-height: 100dvh;
   }
   ::selection {
     @apply bg-brand-500/30;
   }
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-zinc-400;
+    @apply outline-2 outline-offset-2 outline-brand-500;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]) {
@@ -134,7 +134,7 @@
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-line bg-surface;
+    @apply rounded-3xl border border-line bg-surface shadow-[0_1px_2px_rgb(28_25_23/0.04),0_12px_32px_-20px_rgb(28_25_23/0.18)] dark:shadow-none;
   }
   .skeleton {
     background: linear-gradient(90deg, rgb(161 161 170 / 0.12) 0%, rgb(161 161 170 / 0.28) 50%, rgb(161 161 170 / 0.12) 100%);
@@ -163,4 +163,16 @@
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Illustrations des ressources : une teinte pastel par salle / véhicule. */
+.art {
+  --art-bg: hsl(var(--h) 58% 90%);
+  --art-fill: hsl(var(--h) 70% 97%);
+  --art-ink: hsl(var(--h) 42% 30%);
+}
+.dark .art {
+  --art-bg: hsl(var(--h) 34% 17%);
+  --art-fill: hsl(var(--h) 30% 23%);
+  --art-ink: hsl(var(--h) 80% 80%);
 }

@@ -38,7 +38,7 @@ export function MiniCalendar({ onPick }: { onPick?: () => void }) {
       </div>
       <div className="grid grid-cols-7 text-center">
         {["L", "M", "M", "J", "V", "S", "D"].map((d, i) => (
-          <span key={i} className="py-1 text-[11px] text-zinc-400">
+          <span key={i} className="py-1 text-[11px] text-slate-400">
             {d}
           </span>
         ))}
@@ -59,8 +59,8 @@ export function MiniCalendar({ onPick }: { onPick?: () => void }) {
               aria-label={format(d, "EEEE d MMMM", { locale: frLocale })}
               className={cn(
                 "relative mx-auto flex size-9 items-center justify-center rounded-full text-[13px] tabular-nums transition-colors disabled:cursor-not-allowed disabled:opacity-25",
-                active ? "bg-zinc-900 font-medium text-white dark:bg-white dark:text-zinc-900" : "hover:bg-surface-2",
-                !inMonth && !active && "text-zinc-400 dark:text-zinc-600",
+                active ? "bg-brand-600 font-semibold text-accent-fg" : "hover:bg-surface-2",
+                !inMonth && !active && "text-slate-400 dark:text-slate-600",
                 isToday && !active && "font-semibold underline underline-offset-4",
               )}
             >

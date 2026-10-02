@@ -89,7 +89,7 @@ function Splash() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-4">
       <Logo className="size-10" />
-      <p className="text-sm text-zinc-500">Connexion à Microsoft 365…</p>
+      <p className="text-sm text-slate-500">Connexion à Microsoft 365…</p>
     </div>
   );
 }

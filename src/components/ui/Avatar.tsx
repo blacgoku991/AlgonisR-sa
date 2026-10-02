@@ -4,12 +4,13 @@ import { cn } from "../../lib/cn";
 import type { PersonStatus } from "../../lib/availability";
 
 const GRADIENTS = [
-  "from-zinc-500 to-zinc-700",
-  "from-zinc-600 to-zinc-800",
-  "from-neutral-500 to-neutral-700",
-  "from-stone-500 to-stone-700",
-  "from-zinc-400 to-zinc-600",
-  "from-neutral-600 to-neutral-800",
+  "from-teal-400 to-teal-600",
+  "from-sky-400 to-blue-600",
+  "from-amber-400 to-orange-500",
+  "from-rose-400 to-pink-600",
+  "from-emerald-400 to-green-600",
+  "from-indigo-400 to-indigo-600",
+  "from-cyan-400 to-sky-600",
 ];
 
 export function initials(name: string): string {
@@ -32,7 +33,7 @@ const STATUS_COLOR: Record<PersonStatus, string> = {
   busy: "bg-rose-500",
   tentative: "bg-amber-400",
   oof: "bg-fuchsia-500",
-  unknown: "bg-zinc-300 dark:bg-zinc-600",
+  unknown: "bg-slate-300 dark:bg-slate-600",
 };
 
 export const STATUS_LABEL: Record<PersonStatus, string> = {
@@ -60,12 +61,12 @@ export function Avatar({ name, email, size = 36, status, isGroup, className, pho
   return (
     <span className={cn("relative inline-flex shrink-0", className)} style={{ width: size, height: size }}>
       {src ? (
-        <img src={src} alt="" className="size-full rounded-full object-cover ring-2 ring-white dark:ring-zinc-900" />
+        <img src={src} alt="" className="size-full rounded-full object-cover ring-2 ring-white dark:ring-slate-900" />
       ) : (
         <span
           aria-hidden
           className={cn(
-            "flex size-full items-center justify-center rounded-full bg-gradient-to-br font-semibold text-white ring-2 ring-white dark:ring-zinc-900",
+            "flex size-full items-center justify-center rounded-full bg-gradient-to-br font-semibold text-white ring-2 ring-white dark:ring-slate-900",
             gradientFor(email ?? name),
           )}
           style={{ fontSize: Math.max(10, size * 0.38) }}
@@ -76,7 +77,7 @@ export function Avatar({ name, email, size = 36, status, isGroup, className, pho
       {status && (
         <span
           title={STATUS_LABEL[status]}
-          className={cn("absolute right-0 bottom-0 rounded-full ring-2 ring-white dark:ring-zinc-900", STATUS_COLOR[status])}
+          className={cn("absolute right-0 bottom-0 rounded-full ring-2 ring-white dark:ring-slate-900", STATUS_COLOR[status])}
           style={{ width: dot, height: dot }}
         />
       )}
@@ -94,7 +95,7 @@ export function AvatarStack({ people, max = 4, size = 28 }: { people: { name: st
       ))}
       {rest > 0 && (
         <span
-          className="relative flex items-center justify-center rounded-full bg-zinc-100 text-[11px] font-semibold text-zinc-600 ring-2 ring-white dark:bg-zinc-800 dark:text-zinc-300 dark:ring-zinc-900"
+          className="relative flex items-center justify-center rounded-full bg-slate-100 text-[11px] font-semibold text-slate-600 ring-2 ring-white dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-900"
           style={{ width: size, height: size }}
         >
           +{rest}

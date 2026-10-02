@@ -57,7 +57,7 @@ export function Sheet({ open, onOpenChange, title, description, children, classN
               >
                 <Dialog.Title className="sr-only">{title}</Dialog.Title>
                 {description && <Dialog.Description className="sr-only">{description}</Dialog.Description>}
-                {!desktop && <div className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-zinc-300 dark:bg-zinc-700" />}
+                {!desktop && <div className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-slate-300 dark:bg-slate-700" />}
                 {children}
               </motion.div>
             </Dialog.Content>

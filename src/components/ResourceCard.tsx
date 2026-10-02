@@ -38,16 +38,16 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
       <div className="relative overflow-hidden rounded-3xl">
         <ResourceArt
           resource={resource}
-          className={cn("aspect-[16/10] transition-transform duration-500 group-hover:scale-[1.02]", dimmed && "opacity-40")}
+          className={cn("aspect-[16/10] transition-transform duration-500 group-hover:scale-[1.02]", dimmed && "opacity-50 saturate-50")}
         />
         <span className="absolute top-3 left-3">
           <Status state={state} feminine={resource.kind === "room"} />
         </span>
       </div>
 
-      <div className="mt-4 flex items-start justify-between gap-3 px-1">
+      <div className="mt-5 flex items-start justify-between gap-3 px-1">
         <div className="min-w-0">
-          <h3 className="truncate text-[17px] font-semibold tracking-tight">{resource.name}</h3>
+          <h3 className="truncate text-lg font-bold tracking-tight">{resource.name}</h3>
           <p className="mt-0.5 truncate text-sm text-muted">{[...meta, capacity].filter(Boolean).join(" · ")}</p>
         </div>
         {state.status === "busy" ? (
@@ -81,21 +81,21 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
 }
 
 function Status({ state, feminine }: { state: ResourceState; feminine: boolean }) {
-  const base = "inline-flex items-center gap-1.5 rounded-full bg-[var(--bg)] px-2.5 py-1 text-xs font-medium shadow-sm";
+  const base = "inline-flex items-center gap-1.5 rounded-full bg-surface/90 px-3 py-1.5 text-xs font-semibold shadow-sm backdrop-blur";
   switch (state.status) {
     case "loading":
       return <span className={cn(base, "w-20")}>&nbsp;</span>;
     case "free":
       return (
-        <span className={base}>
-          <span className="size-1.5 rounded-full bg-emerald-500" />
+        <span className={cn(base, "text-emerald-700 dark:text-emerald-300")}>
+          <span className="size-2 rounded-full bg-emerald-500" />
           {state.freeUntil ? `Libre jusqu'à ${fmtTime(state.freeUntil)}` : "Disponible"}
         </span>
       );
     case "busy":
       return (
         <span className={cn(base, "text-muted")}>
-          <span className="size-1.5 rounded-full bg-zinc-400" />
+          <span className="size-2 rounded-full bg-amber-500" />
           {state.nextFree ? `Libre à ${fmtTime(state.nextFree)}` : feminine ? "Occupée" : "Occupé"}
         </span>
       );

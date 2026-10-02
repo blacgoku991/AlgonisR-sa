@@ -1,5 +1,5 @@
 import { addMinutes } from "date-fns";
-import { ChevronLeft, ChevronRight, Users } from "lucide-react";
+import { ChartGantt, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { toast } from "sonner";
@@ -123,6 +123,7 @@ export function PlanningPage() {
   return (
     <div className="space-y-5">
       <PageHeader
+        icon={ChartGantt}
         title="Planning"
         subtitle="Vue d'ensemble de la journée. Cliquez ou faites glisser sur un créneau libre pour réserver."
         actions={<KindToggle value={kind} onChange={setKind} />}
@@ -191,7 +192,7 @@ export function PlanningPage() {
               <div className="sticky top-0 z-10 flex h-10 border-b border-line bg-[var(--bg)] backdrop-blur dark:bg-transparent">
                 {Array.from({ length: hours }, (_, i) => (
                   <div key={i} className="relative shrink-0 border-l border-line first:border-l-0" style={{ width: HOUR_WIDTH }}>
-                    <span className="absolute top-2.5 left-2 text-xs font-semibold text-zinc-400 tabular-nums">
+                    <span className="absolute top-2.5 left-2 text-xs font-semibold text-slate-400 tabular-nums">
                       {String(config.dayStartHour + i).padStart(2, "0")}:00
                     </span>
                   </div>
@@ -293,7 +294,7 @@ function BusyBlock({ slot, mine, x, w, max }: { slot: BusySlot; mine?: boolean; 
           ? "bg-brand-600 border-transparent text-accent-fg"
           : slot.status === "tentative"
             ? "border-amber-300/70 bg-amber-100/80 text-amber-900 dark:border-amber-400/30 dark:bg-amber-400/15 dark:text-amber-100"
-            : "border-line bg-surface-2 text-zinc-600 dark:text-zinc-300",
+            : "border-line bg-surface-2 text-slate-600 dark:text-slate-300",
       )}
       style={{ left: left + 1, width: width - 2 }}
     >
@@ -307,7 +308,7 @@ function BusyBlock({ slot, mine, x, w, max }: { slot: BusySlot; mine?: boolean; 
 
 function Legend() {
   return (
-    <div className="ml-auto hidden items-center gap-4 text-xs text-muted md:flex dark:text-zinc-400">
+    <div className="ml-auto hidden items-center gap-4 text-xs text-muted md:flex dark:text-slate-400">
       <span className="flex items-center gap-1.5">
         <span className="size-3 rounded border border-line bg-surface-2" /> Réservé
       </span>

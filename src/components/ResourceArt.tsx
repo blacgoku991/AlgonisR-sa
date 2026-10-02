@@ -1,8 +1,17 @@
+import type React from "react";
 import { cn } from "../lib/cn";
 import type { Resource } from "../types";
 
+/** Teinte stable dérivée du nom quand le catalogue n'en fournit pas. */
+function hueOf(r: Resource) {
+  if (r.hue !== undefined) return r.hue;
+  let h = 0;
+  for (const c of r.id) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return h;
+}
+
 /**
- * Illustration au trait, monochrome, générée à partir des caractéristiques de la ressource
+ * Illustration au trait, sur fond pastel propre à chaque ressource, générée à partir des caractéristiques de la ressource
  * (capacité, équipements, catégorie de véhicule). Une vraie photo (champ `image` du catalogue) la remplace.
  */
 export function ResourceArt({ resource, className }: { resource: Resource; className?: string }) {
@@ -14,13 +23,16 @@ export function ResourceArt({ resource, className }: { resource: Resource; class
     );
   }
   return (
-    <div className={cn("flex items-center justify-center overflow-hidden bg-surface-2 text-zinc-900 dark:text-zinc-100", className)}>
+    <div
+      className={cn("art flex items-center justify-center overflow-hidden bg-[var(--art-bg)] text-[var(--art-ink)]", className)}
+      style={{ "--h": hueOf(resource) } as React.CSSProperties}
+    >
       <svg
         viewBox="0 0 240 140"
         className="h-full w-full max-w-[320px]"
         fill="none"
         stroke="currentColor"
-        strokeWidth={1.4}
+        strokeWidth={1.6}
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden
@@ -70,7 +82,7 @@ function Room({ resource }: { resource: Resource }) {
       {seats(back, hb - 6).map((x, i) => (
         <rect key={`b${i}`} x={x - 6} y={76} width={12} height={14} rx={3} opacity={0.75} />
       ))}
-      <path d={`M${120 - hb} 92 H${120 + hb} L${120 + hf} 112 H${120 - hf} Z`} fill="var(--color-surface)" />
+      <path d={`M${120 - hb} 92 H${120 + hb} L${120 + hf} 112 H${120 - hf} Z`} fill="var(--art-fill)" />
       <path d={`M${120 - hf + 6} 112 V122 M${120 + hf - 6} 112 V122`} opacity={0.6} />
       {seats(front, hf - 4).map((x, i) => (
         <path key={`f${i}`} d={`M${x - 8} 128 Q${x - 8} 118 ${x} 118 Q${x + 8} 118 ${x + 8} 128`} opacity={0.75} />
@@ -136,14 +148,14 @@ function Vehicle({ resource }: { resource: Resource }) {
   return (
     <g transform="translate(0 6)">
       <path d="M16 116 H224" opacity={0.25} />
-      <path d={b.body} fill="var(--color-surface)" />
+      <path d={b.body} fill="var(--art-fill)" />
       {b.windows.map((w, i) => (
         <path key={i} d={w} opacity={0.65} />
       ))}
       {b.extra && <path d={b.extra} opacity={0.5} />}
       {b.wheels.map((cx) => (
         <g key={cx}>
-          <circle cx={cx} cy={100} r={b.r} fill="var(--color-surface)" />
+          <circle cx={cx} cy={100} r={b.r} fill="var(--art-fill)" />
           <circle cx={cx} cy={100} r={b.r * 0.38} opacity={0.6} />
         </g>
       ))}

@@ -149,7 +149,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
       <div className="relative shrink-0 px-6 pt-6">
         <ResourceArt resource={resource} className="aspect-[2/1] rounded-3xl" />
         <SheetClose
-          className="absolute top-9 right-9 flex size-8 items-center justify-center rounded-full bg-[var(--bg)] text-muted shadow-sm transition-colors hover:text-zinc-950 dark:hover:text-white"
+          className="absolute top-9 right-9 flex size-8 items-center justify-center rounded-full bg-[var(--bg)] text-muted shadow-sm transition-colors hover:text-slate-950 dark:hover:text-white"
           aria-label="Fermer"
         >
           <X className="size-4" />
@@ -173,12 +173,12 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
             <CalendarDays className="mt-0.5 size-4 shrink-0 text-muted" />
             <div className="min-w-0 flex-1">
               <p className="font-semibold">{fmtLongDate(start)}</p>
-              <p className="text-sm text-zinc-600 tabular-nums dark:text-zinc-300">
+              <p className="text-sm text-slate-600 tabular-nums dark:text-slate-300">
                 {validRange ? (
                   <>
                     {fmtTime(start)} → {resource.kind === "vehicle" && endDay !== day ? `${format(end, "dd/MM")} ` : ""}
                     {fmtTime(end)}{" "}
-                    <span className="text-zinc-400">· {fmtDuration(Math.round((end.getTime() - start.getTime()) / 60000))}</span>
+                    <span className="text-slate-400">· {fmtDuration(Math.round((end.getTime() - start.getTime()) / 60000))}</span>
                   </>
                 ) : (
                   <span className="text-rose-600">L'heure de fin doit suivre l'heure de début</span>
@@ -277,7 +277,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
             onChange={(e) => setSubject(e.target.value)}
             placeholder={finalSubject}
             maxLength={255}
-            className="h-12 w-full rounded-lg border border-line bg-transparent px-4 text-[15px] transition-all outline-none placeholder:text-zinc-400 focus:border-zinc-400"
+            className="h-12 w-full rounded-lg border border-line bg-transparent px-4 text-[15px] transition-all outline-none placeholder:text-slate-400 focus:border-slate-400"
           />
           <div className="mt-2 flex flex-wrap gap-1.5">
             {SUBJECTS[resource.kind].map((s) => (
@@ -289,7 +289,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
                   "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
                   subject === s
                     ? "border-brand-400 bg-brand-500/10 text-brand-700 dark:text-brand-200"
-                    : "border-line text-zinc-600 hover:border-zinc-300 hover:bg-surface dark:text-zinc-300 dark:hover:bg-white/5",
+                    : "border-line text-slate-600 hover:border-slate-300 hover:bg-surface dark:text-slate-300 dark:hover:bg-white/5",
                 )}
               >
                 {s}
@@ -302,11 +302,11 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
         <section>
           <div className="mb-2 flex items-center justify-between">
             <span className="flex items-center gap-2 text-sm font-semibold">
-              <Users className="size-4 text-zinc-400" />{" "}
+              <Users className="size-4 text-slate-400" />{" "}
               {resource.kind === "room" ? "Inviter des participants" : "Passagers / personnes à prévenir"}
             </span>
             {resource.capacity !== undefined && (
-              <span className={cn("text-xs font-medium tabular-nums", overCapacity ? "text-rose-600" : "text-zinc-400")}>
+              <span className={cn("text-xs font-medium tabular-nums", overCapacity ? "text-rose-600" : "text-slate-400")}>
                 {headcount} / {resource.capacity} {resource.kind === "room" ? "personnes" : "places"}
               </span>
             )}
@@ -319,7 +319,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
             </p>
           )}
           {attendees.length === 0 && (
-            <p className="mt-2 text-xs text-zinc-400">
+            <p className="mt-2 text-xs text-slate-400">
               Astuce : collez une liste d'adresses e-mail pour inviter plusieurs personnes d'un coup.
             </p>
           )}
@@ -349,7 +349,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
             <span
               className={cn(
                 "relative h-6 w-11 shrink-0 rounded-full transition-colors",
-                teams ? "bg-teams" : "bg-zinc-300 dark:bg-zinc-600",
+                teams ? "bg-teams" : "bg-slate-300 dark:bg-slate-600",
               )}
             >
               <motion.span
@@ -375,7 +375,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
                 onChange={(e) => setMessage(e.target.value)}
                 rows={3}
                 placeholder="Ordre du jour, documents à préparer…"
-                className="w-full resize-none rounded-lg border border-line bg-transparent px-4 py-3 text-[15px] outline-none placeholder:text-zinc-400 focus:border-zinc-400"
+                className="w-full resize-none rounded-lg border border-line bg-transparent px-4 py-3 text-[15px] outline-none placeholder:text-slate-400 focus:border-slate-400"
               />
             </>
           ) : (
@@ -415,7 +415,7 @@ function BookingForm({ selection, onBooked }: { selection: Selection; onBooked: 
               ? "Réserver et envoyer les invitations"
               : `Réserver ${KIND_LABEL[resource.kind].article}`}
         </Button>
-        <p className="mt-2 hidden text-center text-[11px] text-zinc-400 md:block">
+        <p className="mt-2 hidden text-center text-[11px] text-slate-400 md:block">
           <kbd className="rounded border border-line px-1 font-sans">Ctrl</kbd> +{" "}
           <kbd className="rounded border border-line px-1 font-sans">Entrée</kbd> pour valider
         </p>
@@ -441,15 +441,15 @@ function BookingProgress({ step, hasAttendees, kind }: { step: BookingStep; hasA
           key={s.id}
           className={cn(
             "flex items-center gap-2",
-            i < current ? "text-muted" : i === current ? "font-medium text-zinc-900 dark:text-white" : "text-zinc-400 dark:text-zinc-600",
+            i < current ? "text-muted" : i === current ? "font-medium text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-600",
           )}
         >
           {i < current ? (
             <CircleCheck className="size-3.5 text-emerald-500" />
           ) : i === current ? (
-            <span className="size-3.5 animate-spin rounded-full border-2 border-zinc-300 border-t-brand-500 dark:border-zinc-700 dark:border-t-brand-400" />
+            <span className="size-3.5 animate-spin rounded-full border-2 border-slate-300 border-t-brand-500 dark:border-slate-700 dark:border-t-brand-400" />
           ) : (
-            <span className="size-3.5 rounded-full border border-zinc-300 dark:border-zinc-700" />
+            <span className="size-3.5 rounded-full border border-slate-300 dark:border-slate-700" />
           )}
           {s.label(kind)}
         </li>
@@ -459,7 +459,7 @@ function BookingProgress({ step, hasAttendees, kind }: { step: BookingStep; hasA
 }
 
 const inputClass =
-  "h-11 w-full rounded-md border border-line bg-transparent px-3 text-sm tabular-nums outline-none focus:border-zinc-400 dark:[color-scheme:dark]";
+  "h-11 w-full rounded-md border border-line bg-transparent px-3 text-sm tabular-nums outline-none focus:border-slate-400 dark:[color-scheme:dark]";
 
 function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
   return (

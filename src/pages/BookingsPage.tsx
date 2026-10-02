@@ -1,4 +1,4 @@
-import { CalendarPlus, CarFront, DoorOpen, ExternalLink, KeyRound, RefreshCw, Trash } from "lucide-react";
+import { CalendarCheck, CalendarPlus, CarFront, DoorOpen, ExternalLink, KeyRound, RefreshCw, Trash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { AlertDialog } from "radix-ui";
 import { useMemo, useState } from "react";
@@ -33,6 +33,7 @@ export function BookingsPage() {
   return (
     <>
       <PageHeader
+        icon={CalendarCheck}
         title="Mes réservations"
         subtitle={count > 0 ? `${count} à venir · synchronisées avec Outlook et Teams` : "Synchronisées avec Outlook et Teams"}
         actions={
@@ -89,8 +90,8 @@ const RESOURCE_STATUS: Record<ResponseStatus, { label: string; dot: string }> = 
   organizer: { label: "Confirmée", dot: "bg-emerald-500" },
   tentativelyAccepted: { label: "Provisoire", dot: "bg-amber-500" },
   declined: { label: "Refusée", dot: "bg-rose-500" },
-  none: { label: "En attente", dot: "bg-zinc-400" },
-  notResponded: { label: "En attente", dot: "bg-zinc-400" },
+  none: { label: "En attente", dot: "bg-slate-400" },
+  notResponded: { label: "En attente", dot: "bg-slate-400" },
 };
 
 function BookingRow({ booking, onCancel }: { booking: Booking; onCancel: () => void }) {
@@ -123,7 +124,7 @@ function BookingRow({ booking, onCancel }: { booking: Booking; onCancel: () => v
       <div className="min-w-0">
         <h3 className="truncate text-sm font-medium">{booking.subject}</h3>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
-          <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+          <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
             <Icon className="size-3.5" strokeWidth={1.75} /> {booking.resourceName}
           </span>
           <span className="flex items-center gap-1.5">
@@ -202,7 +203,7 @@ function CancelDialog({ booking, onClose }: { booking: Booking | null; onClose: 
   return (
     <AlertDialog.Root open={Boolean(booking)} onOpenChange={(o) => !o && onClose()}>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-zinc-950/40 backdrop-blur-sm" />
+        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm" />
         <AlertDialog.Content className="data-[state=open]:animate-pop fixed top-1/2 left-1/2 z-50 w-[min(440px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-line bg-[var(--bg)] p-6 shadow-2xl">
           <span className="flex size-12 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600">
             <Trash className="size-6" />
@@ -218,7 +219,7 @@ function CancelDialog({ booking, onClose }: { booking: Booking | null; onClose: 
             onChange={(e) => setComment(e.target.value)}
             rows={2}
             placeholder="Message facultatif (ex. réunion reportée à jeudi)"
-            className="mt-4 w-full resize-none rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-sm outline-none focus:border-zinc-400"
+            className="mt-4 w-full resize-none rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-sm outline-none focus:border-slate-400"
           />
           <div className="mt-5 flex justify-end gap-2">
             <AlertDialog.Cancel asChild>
@@ -237,7 +238,7 @@ function CancelDialog({ booking, onClose }: { booking: Booking | null; onClose: 
 function Empty() {
   return (
     <div className="card flex flex-col items-center px-6 py-14 text-center">
-      <CalendarPlus className="size-6 text-zinc-400" strokeWidth={1.5} />
+      <CalendarPlus className="size-6 text-slate-400" strokeWidth={1.5} />
       <h3 className="mt-3 font-medium">Aucune réservation à venir</h3>
       <p className="mt-1 max-w-sm text-sm text-muted">Vos réservations de salles et de véhicules apparaîtront ici.</p>
       <Button className="mt-5" size="sm" icon={<CalendarPlus />} onClick={() => navigate("book")}>

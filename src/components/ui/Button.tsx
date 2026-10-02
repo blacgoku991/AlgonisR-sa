@@ -15,15 +15,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<Variant, string> = {
   primary: "bg-brand-600 text-accent-fg hover:opacity-85 active:opacity-75",
-  secondary: "border border-line bg-transparent text-zinc-900 hover:bg-surface dark:text-zinc-100",
-  ghost: "text-muted hover:bg-surface hover:text-zinc-950 dark:hover:text-white",
-  soft: "bg-surface text-zinc-900 hover:bg-surface-2 dark:text-zinc-100",
+  secondary: "border border-line bg-surface text-slate-900 hover:border-brand-300 hover:text-brand-700 dark:text-slate-100",
+  ghost: "text-muted hover:bg-brand-50 hover:text-brand-700",
+  soft: "bg-brand-100 text-brand-700 hover:bg-brand-600 hover:text-accent-fg",
   danger: "bg-rose-600 text-white hover:bg-rose-500 active:bg-rose-700",
   teams: "bg-teams text-white hover:brightness-110",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-8 gap-1.5 rounded-full px-3.5 text-[13px]",
+  sm: "h-9 gap-1.5 rounded-full px-4 text-[13px] font-semibold",
   md: "h-10 gap-2 rounded-full px-5 text-sm",
   lg: "h-12 gap-2 rounded-full px-6 text-[15px]",
 };

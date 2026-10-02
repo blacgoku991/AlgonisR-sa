@@ -22,7 +22,7 @@ export function SignInPage({ onSignIn, error }: { onSignIn: () => Promise<void>;
             }
           }}
           disabled={loading}
-          className="mt-10 flex h-12 w-full items-center justify-center gap-3 rounded-full bg-zinc-950 text-[15px] font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-60 dark:bg-white dark:text-zinc-950"
+          className="mt-10 flex h-12 w-full items-center justify-center gap-3 rounded-full bg-brand-600 text-[15px] font-semibold text-accent-fg transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           <MicrosoftLogo />
           {loading ? "Connexion…" : "Se connecter avec Microsoft 365"}

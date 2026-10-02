@@ -1,3 +1,4 @@
+import { CarFront, DoorOpen } from "lucide-react";
 import { cn } from "../lib/cn";
 import type { ResourceKind } from "../types";
 
@@ -12,7 +13,7 @@ export function KindToggle({
   className?: string;
 }) {
   return (
-    <div className={cn("inline-flex rounded-full bg-surface p-1", className)} role="tablist" aria-label="Type de ressource">
+    <div className={cn("inline-flex shrink-0 self-start rounded-full bg-surface p-1.5 shadow-sm lg:self-auto", className)} role="tablist" aria-label="Type de ressource">
       {(["room", "vehicle"] as const).map((k) => (
         <button
           key={k}
@@ -20,12 +21,13 @@ export function KindToggle({
           aria-selected={value === k}
           onClick={() => onChange(k)}
           className={cn(
-            "h-9 rounded-full px-5 text-sm font-medium transition-all",
+            "flex h-11 items-center gap-2 rounded-full px-5 text-sm font-semibold transition-all",
             value === k
-              ? "bg-[var(--bg)] text-zinc-950 shadow-sm dark:bg-zinc-800 dark:text-white"
-              : "text-muted hover:text-zinc-950 dark:hover:text-white",
+              ? "bg-brand-600 text-accent-fg"
+              : "text-muted hover:text-slate-900 dark:hover:text-white",
           )}
         >
+          {k === "room" ? <DoorOpen className="size-4" /> : <CarFront className="size-4" />}
           {k === "room" ? "Salles" : "Véhicules"}
         </button>
       ))}

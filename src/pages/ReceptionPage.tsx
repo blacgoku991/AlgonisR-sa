@@ -13,12 +13,12 @@ import { dayKey, fmtLongDate, fmtTime, format, frLocale, isSameDay, parseDayKey,
 import type { KeyLog, VehicleBooking } from "../types";
 
 const STATUS: Record<KeyStatus, { label: string; dot: string; text: string }> = {
-  upcoming: { label: "À venir", dot: "bg-zinc-400", text: "text-muted" },
+  upcoming: { label: "À venir", dot: "bg-slate-400", text: "text-muted" },
   toHand: { label: "À remettre", dot: "bg-brand-500", text: "text-brand-600 dark:text-brand-400" },
   out: { label: "Clés sorties", dot: "bg-amber-500", text: "text-amber-700 dark:text-amber-400" },
   overdue: { label: "Retour en retard", dot: "bg-rose-500", text: "text-rose-600 dark:text-rose-400" },
   returned: { label: "Rendues", dot: "bg-emerald-500", text: "text-emerald-700 dark:text-emerald-400" },
-  missed: { label: "Non retirées", dot: "bg-zinc-400", text: "text-muted" },
+  missed: { label: "Non retirées", dot: "bg-slate-400", text: "text-muted" },
 };
 
 type Action = { booking: VehicleBooking; kind: "hand" | "return" };
@@ -49,7 +49,7 @@ export function ReceptionPage() {
   if (!role?.reception) {
     return (
       <div className="card mx-auto mt-10 flex max-w-md flex-col items-center px-6 py-12 text-center">
-        <Lock className="size-6 text-zinc-400" strokeWidth={1.5} />
+        <Lock className="size-6 text-slate-400" strokeWidth={1.5} />
         <h1 className="mt-3 font-medium">Accès réservé à l'accueil</h1>
         <p className="mt-1 text-sm text-muted">Cet espace est réservé aux personnes chargées de la remise des clés des véhicules.</p>
       </div>
@@ -59,6 +59,7 @@ export function ReceptionPage() {
   return (
     <>
       <PageHeader
+        icon={KeyRound}
         title="Accueil · clés des véhicules"
         subtitle="Remise et retour des clés. Mis à jour automatiquement toutes les 30 secondes."
         actions={
@@ -208,14 +209,14 @@ function Row({ booking: b, status, onAction }: { booking: VehicleBooking; status
               href={`https://teams.microsoft.com/l/chat/0/0?users=${encodeURIComponent(b.organizer.email)}`}
               target="_blank"
               rel="noreferrer"
-              className="rounded p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+              className="rounded p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white"
               title="Écrire sur Teams"
             >
               <MessageSquare className="size-3.5" />
             </a>
             <a
               href={`mailto:${b.organizer.email}`}
-              className="rounded p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+              className="rounded p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white"
               title="Envoyer un e-mail"
             >
               <Mail className="size-3.5" />
@@ -324,7 +325,7 @@ function KeyDialog({ action, onClose }: { action: Action | null; onClose: () => 
                   onChange={(e) => setKm(e.target.value.replace(/[^\d]/g, ""))}
                   placeholder="ex. 12 480"
                   className={cn(
-                    "h-9 w-full rounded-md border bg-transparent px-3 text-sm tabular-nums outline-none focus:ring-2 dark:bg-zinc-900",
+                    "h-9 w-full rounded-md border bg-transparent px-3 text-sm tabular-nums outline-none focus:ring-2 dark:bg-slate-900",
                     invalidKm ? "border-rose-500 focus:ring-rose-500/20" : "border-line focus:border-brand-500 focus:ring-brand-500/20",
                   )}
                 />
@@ -340,7 +341,7 @@ function KeyDialog({ action, onClose }: { action: Action | null; onClose: () => 
                   value={notes}
                   onChange={(e) => setNotes(e.target.value.slice(0, 300))}
                   rows={2}
-                  className="w-full resize-none rounded-md border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-zinc-400 dark:bg-zinc-900"
+                  className="w-full resize-none rounded-md border border-line bg-transparent px-3 py-2 text-sm outline-none focus:border-slate-400 dark:bg-slate-900"
                 />
               </label>
               <div className="mt-5 flex justify-end gap-2">
@@ -366,7 +367,7 @@ function IconBtn({ label, onClick, children }: { label: string; onClick: () => v
     <button
       onClick={onClick}
       aria-label={label}
-      className="flex size-8 items-center justify-center text-muted hover:text-zinc-900 dark:hover:text-white"
+      className="flex size-8 items-center justify-center text-muted hover:text-slate-900 dark:hover:text-white"
     >
       {children}
     </button>

@@ -27,7 +27,7 @@ export function DayTimeline({ day, busy, selection, className }: DayTimelineProp
 
   return (
     <div className={cn("select-none", className)}>
-      <div className="relative h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/[0.08]">
+      <div className="relative h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-white/[0.08]">
         {showNow && <div className="hatched absolute inset-y-0 left-0" style={{ width: `${pct(now)}%` }} />}
         {busy?.filter(isBlocking).map((slot, i) => (
           <div
@@ -35,7 +35,7 @@ export function DayTimeline({ day, busy, selection, className }: DayTimelineProp
             title={`${fmtTime(slot.start)} – ${fmtTime(slot.end)}${slot.subject ? ` · ${slot.subject}` : ""}`}
             className={cn(
               "absolute inset-y-0 rounded-[3px]",
-              slot.status === "tentative" ? "bg-zinc-400/60" : "bg-zinc-400 dark:bg-zinc-500",
+              slot.status === "tentative" ? "bg-slate-400/60" : "bg-slate-400 dark:bg-slate-500",
               slot.optimistic && "bg-brand-500",
             )}
             style={{ left: `${pct(slot.start)}%`, width: `${Math.max(0.8, pct(slot.end) - pct(slot.start))}%` }}
@@ -43,12 +43,12 @@ export function DayTimeline({ day, busy, selection, className }: DayTimelineProp
         ))}
         {selection && (
           <div
-            className={cn("absolute inset-y-0 rounded-full", selection.ok ? "bg-zinc-950 dark:bg-white" : "bg-rose-500")}
+            className={cn("absolute inset-y-0 rounded-full", selection.ok ? "bg-brand-500" : "bg-rose-500")}
             style={{ left: `${pct(selection.start)}%`, width: `${Math.max(1.2, pct(selection.end) - pct(selection.start))}%` }}
           />
         )}
       </div>
-      <div className="relative mt-1.5 h-3 text-[10px] text-zinc-400 tabular-nums dark:text-muted">
+      <div className="relative mt-1.5 h-3 text-[10px] text-slate-400 tabular-nums dark:text-muted">
         {labels.map((h) => (
           <span
             key={h}

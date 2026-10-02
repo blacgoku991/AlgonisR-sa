@@ -1,16 +1,11 @@
-/** Monogramme monochrome (s'inverse avec le thème). */
+/** Logo : calendrier stylisé sur pastille turquoise. */
 export function Logo({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
-      <rect width="64" height="64" rx="16" className="fill-zinc-950 dark:fill-white" />
-      <path
-        d="M22 44V20h12a8 8 0 0 1 0 16H22m12 0 9 8"
-        fill="none"
-        className="stroke-white dark:stroke-zinc-950"
-        strokeWidth="5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <rect width="64" height="64" rx="18" className="fill-brand-600" />
+      <rect x="15" y="19" width="34" height="29" rx="7" fill="none" className="stroke-accent-fg" strokeWidth="4" />
+      <path d="M15 28h34M25 14v9M39 14v9" fill="none" className="stroke-accent-fg" strokeWidth="4" strokeLinecap="round" />
+      <circle cx="32" cy="38" r="3.5" className="fill-accent-fg" />
     </svg>
   );
 }

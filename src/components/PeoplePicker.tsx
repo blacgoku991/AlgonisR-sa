@@ -92,7 +92,7 @@ export function PeoplePicker({ value, onChange, statusFor, exclude }: PeoplePick
             focused ? "border-brand-400 ring-4 ring-brand-500/15" : "border-line",
           )}
         >
-          <Search className="size-4 shrink-0 text-zinc-400" />
+          <Search className="size-4 shrink-0 text-slate-400" />
           <input
             ref={input}
             value={query}
@@ -105,14 +105,14 @@ export function PeoplePicker({ value, onChange, statusFor, exclude }: PeoplePick
             onFocus={() => setFocused(true)}
             onBlur={() => setTimeout(() => setFocused(false), 150)}
             placeholder="Rechercher un collègue, une équipe ou un e-mail…"
-            className="h-full min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-zinc-400"
+            className="h-full min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-slate-400"
             role="combobox"
             aria-expanded={open}
             aria-controls={listId}
             aria-autocomplete="list"
             aria-label="Rechercher des participants"
           />
-          {isFetching && typing && <LoaderCircle className="size-4 animate-spin text-zinc-400" />}
+          {isFetching && typing && <LoaderCircle className="size-4 animate-spin text-slate-400" />}
         </div>
 
         <AnimatePresence>
@@ -124,7 +124,7 @@ export function PeoplePicker({ value, onChange, statusFor, exclude }: PeoplePick
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.14 }}
-              className="absolute inset-x-0 top-[calc(100%+6px)] z-20 max-h-72 overflow-y-auto rounded-lg border border-line bg-[var(--bg)] p-1.5 shadow-xl shadow-zinc-900/10"
+              className="absolute inset-x-0 top-[calc(100%+6px)] z-20 max-h-72 overflow-y-auto rounded-lg border border-line bg-[var(--bg)] p-1.5 shadow-xl shadow-slate-900/10"
             >
               {!typing && (
                 <li className="px-2.5 pt-1.5 pb-1 text-[11px] font-medium tracking-wide text-muted uppercase">
@@ -147,7 +147,7 @@ export function PeoplePicker({ value, onChange, statusFor, exclude }: PeoplePick
                         {[p.jobTitle, p.department].filter(Boolean).join(" · ") || p.email}
                       </span>
                     </span>
-                    <Plus className="size-4 text-zinc-400" />
+                    <Plus className="size-4 text-slate-400" />
                   </button>
                 </li>
               ))}
@@ -184,7 +184,7 @@ export function PeoplePicker({ value, onChange, statusFor, exclude }: PeoplePick
 
       {suggestions.length > 0 && (
         <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-          <span className="shrink-0 text-xs font-medium text-zinc-400">Contacts fréquents</span>
+          <span className="shrink-0 text-xs font-medium text-slate-400">Contacts fréquents</span>
           {suggestions.map((p) => (
             <button
               key={p.email}
@@ -194,7 +194,7 @@ export function PeoplePicker({ value, onChange, statusFor, exclude }: PeoplePick
             >
               <Avatar name={p.name} email={p.email} isGroup={p.isGroup} size={24} />
               {p.name.split(" ")[0]}
-              <UserPlus className="size-3.5 text-zinc-400 group-hover:text-brand-500" />
+              <UserPlus className="size-3.5 text-slate-400 group-hover:text-brand-500" />
             </button>
           ))}
         </div>
@@ -252,7 +252,7 @@ export function PeoplePicker({ value, onChange, statusFor, exclude }: PeoplePick
                             status === "busy" && "bg-rose-500/10 text-rose-700 dark:text-rose-300",
                             status === "tentative" && "bg-amber-500/10 text-amber-700 dark:text-amber-300",
                             status === "oof" && "bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300",
-                            status === "unknown" && "bg-zinc-500/10 text-muted",
+                            status === "unknown" && "bg-slate-500/10 text-muted",
                           )}
                         >
                           {STATUS_LABEL[status]}
@@ -261,7 +261,7 @@ export function PeoplePicker({ value, onChange, statusFor, exclude }: PeoplePick
                       <button
                         type="button"
                         onClick={() => remove(p.email)}
-                        className="rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-surface-2 hover:text-zinc-700 dark:hover:bg-white/10"
+                        className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-surface-2 hover:text-slate-700 dark:hover:bg-white/10"
                         aria-label={`Retirer ${p.name}`}
                       >
                         <X className="size-4" />
