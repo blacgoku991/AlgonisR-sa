@@ -22,9 +22,9 @@ interface NavItem {
 }
 
 const NAV: NavItem[] = [
-  { view: "book", label: "Réserver", short: "Réserver", hint: "Salles et véhicules", icon: CalendarPlus, tone: "bg-teal-500/15 text-teal-600 dark:text-teal-300" },
-  { view: "planning", label: "Planning", short: "Planning", hint: "Vue de la journée", icon: ChartGantt, tone: "bg-violet-500/15 text-violet-600 dark:text-violet-300" },
-  { view: "bookings", label: "Mes réservations", short: "Mes résas", hint: "À venir et passées", icon: CalendarCheck, tone: "bg-amber-500/15 text-amber-600 dark:text-amber-300" },
+  { view: "book", label: "Réserver", short: "Réserver", hint: "Salles et véhicules", icon: CalendarPlus, tone: "bg-brand-100 text-brand-700" },
+  { view: "planning", label: "Planning", short: "Planning", hint: "Vue de la journée", icon: ChartGantt, tone: "bg-brand-100 text-brand-700" },
+  { view: "bookings", label: "Mes réservations", short: "Mes résas", hint: "À venir et passées", icon: CalendarCheck, tone: "bg-brand-100 text-brand-700" },
 ];
 const RECEPTION: NavItem = {
   view: "reception",
@@ -32,7 +32,7 @@ const RECEPTION: NavItem = {
   short: "Accueil",
   hint: "Clés des véhicules",
   icon: KeyRound,
-  tone: "bg-rose-500/15 text-rose-600 dark:text-rose-300",
+  tone: "bg-brand-100 text-brand-700",
 };
 
 interface AppShellProps {
@@ -61,7 +61,7 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
           <a href={hrefFor("book")} className="flex items-center gap-3 px-2" aria-label="Retour à la réservation">
             <Logo className="size-11" />
             <span className="leading-tight">
-              <span className="block text-lg font-bold tracking-tight">{config.appName}</span>
+              <span className="block font-display text-2xl font-medium tracking-tight">{config.appName}</span>
               <span className="block text-xs text-muted">{config.companyName} · réservations</span>
             </span>
           </a>
@@ -91,7 +91,7 @@ export function AppShell({ children, theme, onToggleTheme, onSignOut, embedded }
                     <span
                       className={cn(
                         "grid h-6 min-w-6 place-items-center rounded-full px-1.5 text-xs font-bold tabular-nums",
-                        active ? "bg-accent-fg/20" : "bg-amber-500/15 text-amber-600 dark:text-amber-300",
+                        active ? "bg-accent-fg/20" : "bg-brand-100 text-brand-700",
                       )}
                     >
                       {upcoming}

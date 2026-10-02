@@ -1,8 +1,7 @@
 import { addMinutes } from "date-fns";
 import { CalendarSearch, RotateCcw, TriangleAlert } from "lucide-react";
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { useMemo, useState } from "react";
-import { ResourceCard, ResourceCardSkeleton } from "../components/ResourceCard";
+import { ResourceCarousel } from "../components/ResourceCarousel";
 import { KindToggle } from "../components/KindToggle";
 import { FilterChips, SearchBar } from "../components/SearchBar";
 import { Button } from "../components/ui/Button";
@@ -24,14 +23,14 @@ export function BookPage() {
     <>
       <section className="relative overflow-hidden hero rounded-[2.5rem] px-6 pt-12 pb-8 sm:px-14 sm:pt-20 sm:pb-14">
                 <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
             {me && (
               <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-surface/70 px-3.5 py-1.5 text-sm font-medium text-brand-700">
                 <span className="size-2 rounded-full bg-brand-500" />
                 Bonjour {me.givenName ?? me.name.split(" ")[0]}
               </p>
             )}
-            <h1 className="text-[32px] leading-[1.08] font-bold tracking-[-0.035em] sm:text-[60px]">
+            <h1 className="text-[32px] leading-[1.08] font-display font-medium tracking-[-0.02em] sm:text-[54px]">
               {kind === "room" ? (
                 <>
                   Trouvez la <span className="text-brand-600">salle idéale</span>,<br className="hidden sm:block" /> en quelques secondes.
@@ -96,7 +95,7 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
     <section className="mt-16 min-w-0 space-y-10">
       <div className="flex items-baseline justify-between gap-4">
         <div>
-          <h2 className="text-[28px] font-bold tracking-tight">
+          <h2 className="font-display text-[30px] font-medium tracking-tight">
             {availability ? (
               <>
                 {freeCount} {freeCount > 1 ? label.many : label.one} disponible{freeCount > 1 ? "s" : ""}
@@ -123,11 +122,7 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
       )}
 
       {isLoading ? (
-        <div className="grid gap-10 md:grid-cols-2">
-          {Array.from({ length: 4 }, (_, i) => (
-            <ResourceCardSkeleton key={i} />
-          ))}
-        </div>
+        <div className="skeleton mx-auto mt-14 h-[230px] w-[78%] max-w-[560px] rounded-[2rem] sm:h-[340px]" />
       ) : items.length === 0 ? (
         <EmptyState
           noResources={!resources || resources.length === 0}
@@ -139,28 +134,17 @@ function Results({ onlyFree, resetOnlyFree }: { onlyFree: boolean; resetOnlyFree
           }}
         />
       ) : (
-        <LayoutGroup>
-          <motion.div layout className="grid gap-10 md:grid-cols-2">
-            <AnimatePresence initial={false} mode="popLayout">
-              {items.map(({ resource, state }, index) => (
-                <ResourceCard
-                  key={resource.id}
-                  index={index}
-                  resource={resource}
-                  state={state}
-                  busy={availability?.[resource.id]?.busy}
-                  start={start}
-                  end={end}
-                  past={past}
-                  onBook={(at) => {
-                    const s = at ?? start;
-                    open({ resource, start: s, end: new Date(s.getTime() + (end.getTime() - start.getTime())) });
-                  }}
-                />
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        </LayoutGroup>
+        <ResourceCarousel
+          items={items}
+          busyOf={(id) => availability?.[id]?.busy}
+          start={start}
+          end={end}
+          past={past}
+          onBook={(resource, at) => {
+            const s = at ?? start;
+            open({ resource, start: s, end: new Date(s.getTime() + (end.getTime() - start.getTime())) });
+          }}
+        />
       )}
     </section>
   );

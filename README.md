@@ -19,7 +19,7 @@
 | 🔒 **Zéro double réservation** | Revérification en direct, confirmation par Exchange avant l'envoi des invitations, annulation automatique si le créneau a été pris entre-temps, règles (pas de passé, durée maximale, un seul véhicule à la fois par personne). |
 | 📋 **Mes réservations** | Rejoindre la réunion Teams, ouvrir dans Outlook, voir qui a accepté, annuler (les invités sont prévenus). |
 | 🧩 **Dans Teams et Outlook** | L'application s'installe dans Teams, Outlook et l'application Microsoft 365, avec authentification unique (aucune connexion supplémentaire). |
-| 🎨 **Coloré et aéré** | Bleu nuit et turquoise par défaut, thème clair crème au choix (, suit Teams dans Teams), mobile, accessible au clavier. |
+| 🎨 **Noir et or** | Thème sombre doré par défaut, carrousel 3D des salles et véhicules, thème clair ivoire au choix (, suit Teams dans Teams), mobile, accessible au clavier. |
 
 <table>
   <tr>

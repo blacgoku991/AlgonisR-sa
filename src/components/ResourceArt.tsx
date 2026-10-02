@@ -24,7 +24,7 @@ export function ResourceArt({ resource, className }: { resource: Resource; class
   }
   return (
     <div
-      className={cn("art flex items-center justify-center overflow-hidden bg-[var(--art-bg)] text-[var(--art-ink)]", className)}
+      className={cn("art flex items-center justify-center overflow-hidden [background:var(--art-bg)] text-[var(--art-ink)]", className)}
       style={{ "--h": hueOf(resource) } as React.CSSProperties}
     >
       <svg

@@ -79,7 +79,7 @@ export function ResourceCard({ resource, state, busy, start, end, past, onBook }
   );
 }
 
-function Status({ state, feminine }: { state: ResourceState; feminine: boolean }) {
+export function Status({ state, feminine }: { state: ResourceState; feminine: boolean }) {
   const base = "inline-flex items-center gap-1.5 rounded-full bg-surface/90 px-3 py-1.5 text-xs font-semibold shadow-sm backdrop-blur";
   switch (state.status) {
     case "loading":
